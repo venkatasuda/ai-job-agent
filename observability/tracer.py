@@ -87,12 +87,13 @@ class PipelineTracer:
 
     TRACES_DIR = Path("observability/traces")
 
-    def __init__(self, run_id: Optional[str] = None):
+    def __init__(self, run_id: Optional[str] = None, trace_dir: Optional[Path] = None):
         self.run_id = run_id or str(uuid4())[:12]
         self.started_at = datetime.utcnow().isoformat()
         self.spans: List[Span] = []
         self._active: Optional[Span] = None
-        self.TRACES_DIR.mkdir(parents=True, exist_ok=True)
+        self.traces_dir = Path(trace_dir) if trace_dir else self.TRACES_DIR
+        self.traces_dir.mkdir(parents=True, exist_ok=True)
 
     @contextmanager
     def span(self, name: str, input_count: int = 0) -> Generator[Span, None, None]:
@@ -158,7 +159,7 @@ class PipelineTracer:
     def save(self):
         """Save trace to disk."""
         data = self.summary()
-        path = self.TRACES_DIR / f"trace_{self.run_id}.json"
+        path = self.traces_dir / f"trace_{self.run_id}.json"
         path.write_text(json.dumps(data, indent=2))
         return path
 

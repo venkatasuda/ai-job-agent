@@ -95,7 +95,7 @@ class NewGradScraper:
                 job["is_remote"] = any("remote" in loc.lower() for loc in locations)
                 job["url"] = apply_url or url
                 job["apply_url"] = apply_url or url
-                job["date_posted"] = date_posted[:10] if date_posted else ""
+                job["date_posted"] = str(date_posted)[:10] if date_posted else ""
                 job["description"] = f"New graduate position at {company}. Role: {title}."
                 jobs.append(job)
 
@@ -133,7 +133,7 @@ class NewGradScraper:
                     job["location"] = item.get("location", "United States")
                     job["url"] = item.get("url", item.get("job_url", ""))
                     job["apply_url"] = item.get("apply_url", job["url"])
-                    job["date_posted"] = (item.get("date_posted") or "")[:10]
+                    job["date_posted"] = str(item.get("date_posted") or "")[:10]
                     job["is_remote"] = item.get("remote", False)
                     job["description"] = item.get("description", "")[:1000]
                     if job["url"]:

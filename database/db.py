@@ -93,12 +93,20 @@ INTERVIEW_STAGES = [
 
 
 class JobDatabase:
-    def __init__(self, db_path: str = "jobs.db", dedupe_days: int = 30):
+    def __init__(self, db_path: str = "jobs.db", dedupe_window_days: int = 30):
         self.db_path = db_path
-        self.dedupe_days = dedupe_days
+        self.dedupe_window_days = dedupe_window_days
+        # In-memory DBs exist only for the life of their connection, so hold one
+        # open for this object; file DBs open a fresh connection per call.
+        self._shared_conn: sqlite3.Connection | None = None
+        if db_path == ":memory:":
+            self._shared_conn = sqlite3.connect(db_path, check_same_thread=False)
+            self._shared_conn.row_factory = sqlite3.Row
         self._init_db()
 
     def _conn(self) -> sqlite3.Connection:
+        if self._shared_conn is not None:
+            return self._shared_conn
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         return conn
@@ -118,7 +126,7 @@ class JobDatabase:
 
     def is_seen(self, url: str) -> bool:
         """Return True if this URL was seen within the dedupe window."""
-        cutoff = (datetime.utcnow() - timedelta(days=self.dedupe_days)).isoformat()
+        cutoff = (datetime.utcnow() - timedelta(days=self.dedupe_window_days)).isoformat()
         with self._conn() as conn:
             row = conn.execute(
                 "SELECT 1 FROM jobs WHERE url = ? AND scraped_at > ?", (url, cutoff)
@@ -127,7 +135,7 @@ class JobDatabase:
 
     def filter_new(self, jobs: List[Dict]) -> List[Dict]:
         """Return only jobs not already in the DB within the dedupe window."""
-        return [j for j in jobs if not self.is_seen(j["url"])]
+        return [j for j in jobs if not self.is_seen(j.get("url") or j.get("job_url") or "")]
 
     def save_jobs(self, jobs: List[Dict]) -> int:
         """Insert or replace jobs. Returns count saved."""
@@ -143,7 +151,7 @@ class JobDatabase:
                          cover_letter, applied, applied_at, scraped_at, notified)
                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
                         (
-                            job.get("url", ""),
+                            job.get("url") or job.get("job_url") or "",
                             job.get("title", ""),
                             job.get("company", ""),
                             job.get("location", ""),

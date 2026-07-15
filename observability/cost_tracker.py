@@ -58,6 +58,7 @@ class CostTracker:
         stage: str,
         tokens_in: int,
         tokens_out: int,
+        job_count: int = 0,
         run_id: str = "",
         metadata: Optional[Dict] = None,
     ) -> float:
@@ -70,6 +71,7 @@ class CostTracker:
             "stage": stage,
             "tokens_in": tokens_in,
             "tokens_out": tokens_out,
+            "job_count": job_count,
             "cost_usd": round(cost, 7),
             **(metadata or {}),
         }

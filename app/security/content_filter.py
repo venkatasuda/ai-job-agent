@@ -50,7 +50,8 @@ class ContentFilter:
         r"(?i)\b(principal|distinguished|fellow)\b",
     ]
 
-    def __init__(self, config: dict):
+    def __init__(self, config: dict | None = None):
+        config = config or {}
         self.cfg = config
         self.search_cfg = config.get("search", {})
         self.keywords = [k.lower() for k in self.search_cfg.get("keywords", [])]

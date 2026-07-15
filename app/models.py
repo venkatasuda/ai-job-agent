@@ -173,7 +173,7 @@ class Job(BaseModel):
     @property
     def display_score(self) -> str:
         s = self.personalized_score or self.score
-        return f"{s:.0f}%" if s is not None else "N/A"
+        return f"{s:.0f}" if s is not None else "N/A"
 
     @computed_field
     @property
@@ -244,6 +244,10 @@ class PipelineRun(BaseModel):
         ).total_seconds()
         self.status = "completed"
 
+    def finish(self):
+        """Alias for complete() — mark the run as finished."""
+        self.complete()
+
 
 class ApplicationEvent(BaseModel):
     """Tracks a stage change in the interview pipeline."""
@@ -260,9 +264,10 @@ class ApplicationEvent(BaseModel):
 
 class ScoringResult(BaseModel):
     """Output from the JobScorer agent."""
-    job_id: str
+    job_id: str = ""
     score: float = Field(..., ge=0, le=100)
-    reason: str
+    verdict: str = ""
+    reason: str = ""
     keyword_matches: List[str] = []
     keyword_gaps: List[str] = []
     experience_match: float = Field(0.0, ge=0, le=1)

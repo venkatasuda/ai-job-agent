@@ -41,7 +41,12 @@ def sample_job():
         "company": "Anthropic",
         "location": "San Francisco, CA",
         "job_url": "https://jobs.ashbyhq.com/anthropic/ml-001",
-        "description": "Build safety-critical ML systems. PyTorch, Python, distributed training.",
+        "description": (
+            "Build safety-critical ML systems using PyTorch and Python. Work on "
+            "distributed training infrastructure, model evaluation pipelines, and "
+            "large-scale data processing for frontier models. Strong software "
+            "engineering fundamentals required."
+        ),
         "source": "greenhouse",
         "is_remote": False,
         "salary_min": 180000,
@@ -63,8 +68,12 @@ class TestRepostDetector:
     def test_passes_unique_jobs(self, minimal_config, sample_job):
         from ai.repost_detector import RepostDetector
         detector = RepostDetector(minimal_config)
-        job1 = {**sample_job, "id": "a", "job_url": "https://example.com/job/1"}
-        job2 = {**sample_job, "id": "b", "job_url": "https://example.com/job/2"}
+        job1 = {**sample_job, "id": "a", "company": "Anthropic",
+                "title": "Machine Learning Engineer",
+                "job_url": "https://example.com/job/1"}
+        job2 = {**sample_job, "id": "b", "company": "OpenAI",
+                "title": "Research Engineer", "location": "Remote",
+                "job_url": "https://example.com/job/2"}
         clean, filtered = detector.filter_jobs([job1, job2])
         assert len(clean) == 2, "Unique jobs should pass"
         assert len(filtered) == 0

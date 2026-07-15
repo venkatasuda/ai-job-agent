@@ -171,7 +171,7 @@ class CoverLetterGenerator:
             ), max_tokens=600)
 
         # Output filter — strip placeholders, enforce length, flag missing company name
-        validation = OutputFilter().validate_cover_letter(final_cl, job)
+        validation = OutputFilter.validate_cover_letter(final_cl, job=job)
         if validation.issues:
             logger.debug(f"  CL output issues [{company}]: {validation.issues}")
         if validation.output:

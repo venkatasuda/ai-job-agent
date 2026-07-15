@@ -138,6 +138,11 @@ class JDSummarizer:
                 green.append(label)
         return red, green
 
+    def _rule_based_analysis(self, jd: str) -> dict:
+        """Rule-based red/green flag analysis as a dict (no LLM)."""
+        red, green = self._rule_based_flags(jd)
+        return {"red_flags": red, "green_flags": green}
+
     def summarize(self, job: Dict) -> Dict:
         """Summarize a job description. Returns dict with all fields."""
         cache_key = self._get_cache_key(job)

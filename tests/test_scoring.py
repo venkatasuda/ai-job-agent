@@ -85,19 +85,19 @@ def sample_resume():
 class TestPromptRegistry:
     def test_registry_has_scoring_prompt(self):
         from app.prompts.registry import REGISTRY
-        prompt = REGISTRY.get("scoring")
+        prompt = REGISTRY.get("scoring.resume_match")
         assert prompt is not None
         assert "{resume}" in prompt.template or "{job_description}" in prompt.template
 
     def test_registry_returns_latest_version(self):
         from app.prompts.registry import REGISTRY
-        prompt = REGISTRY.get("scoring")
+        prompt = REGISTRY.get("scoring.resume_match")
         # Should return v1 (or latest)
         assert prompt.version is not None
 
     def test_prompt_render(self):
         from app.prompts.registry import REGISTRY
-        prompt = REGISTRY.get("scoring")
+        prompt = REGISTRY.get("scoring.resume_match")
         rendered = prompt.render(
             resume="My resume",
             job_title="ML Engineer",
@@ -110,14 +110,14 @@ class TestPromptRegistry:
 
     def test_prompt_cost_estimate(self):
         from app.prompts.registry import REGISTRY
-        prompt = REGISTRY.get("scoring")
+        prompt = REGISTRY.get("scoring.resume_match")
         assert prompt.estimated_cost_usd >= 0
         assert prompt.estimated_cost_usd < 0.10  # Should be cheap
 
     def test_render_prompt_shortcut(self):
         from app.prompts.registry import render_prompt
         result = render_prompt(
-            "cover_letter_draft",
+            "cover_letter.draft",
             resume="resume text",
             job_title="SWE",
             company="Google",
@@ -189,7 +189,7 @@ class TestOutputFilter:
 class TestJobScorer:
     def _make_scorer(self, config, resume):
         """Helper: build scorer with given config."""
-        from ai.job_scorer import JobScorer
+        from ai.scorer import JobScorer
         return JobScorer(config, resume)
 
     def test_scorer_score_range(self, sample_resume):
@@ -246,9 +246,9 @@ class TestGoldenDataset:
         assert GOLDEN_PATH.exists(), f"Golden dataset missing at {GOLDEN_PATH}"
 
     def test_golden_dataset_structure(self, golden_dataset):
-        assert "scoring" in golden_dataset
-        assert "cover_letters" in golden_dataset
-        assert "scam" in golden_dataset
+        assert "scoring_cases" in golden_dataset
+        assert "cover_letter_cases" in golden_dataset
+        assert "scam_filter_cases" in golden_dataset
 
     def test_golden_scoring_cases_have_range(self, golden_dataset):
         for case in golden_dataset.get("scoring", []):

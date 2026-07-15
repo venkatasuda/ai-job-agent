@@ -319,7 +319,7 @@ ai:
   model: "gpt-4o-mini"            # cheapest option — ~$2-5/month running hourly
   min_match_score: 70
 
-  openai_api_key: ""              # Or set env var OPENAI_API_KEY
+  openai_api_key: "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"
   gemini_api_key: ""              # Or set env var GEMINI_API_KEY
 
   cover_letter_threshold: 70      # Generate cover letter if score >= this
@@ -490,3 +490,5 @@ resume_optimizer:
   #   - Mirrors JD language where truthful
   #   - Tracks every change made and why
 
+  openai_api_key: 
+  

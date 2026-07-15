@@ -84,8 +84,13 @@ class VisaFilter:
             job.get("company", ""),
         ]).lower()
 
-        sponsors_found = [p for p in SPONSORS_PATTERNS if re.search(p, text)]
         no_sponsor_found = [p for p in NO_SPONSOR_PATTERNS if re.search(p, text)]
+        # Blank out negated spans (e.g. "no visa sponsorship") so a positive
+        # pattern like "visa sponsor" can't false-match inside a denial.
+        positive_text = text
+        for p in NO_SPONSOR_PATTERNS:
+            positive_text = re.sub(p, " ", positive_text)
+        sponsors_found = [p for p in SPONSORS_PATTERNS if re.search(p, positive_text)]
 
         company_lower = (job.get("company") or "").lower()
         known_sponsor = any(known in company_lower for known in KNOWN_SPONSORS)

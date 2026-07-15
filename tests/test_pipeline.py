@@ -194,7 +194,7 @@ class TestPipelineTracer:
             span.tokens_out = 200
         assert len(tracer.spans) == 1
         assert tracer.spans[0].name == "scrape"
-        assert tracer.spans[0].status == "ok"
+        assert tracer.spans[0].status == "completed"
         assert tracer.spans[0].duration_ms > 0
 
     def test_tracer_marks_error(self, tmp_path):
@@ -262,19 +262,19 @@ class TestFeedbackCapture:
     def test_feedback_thumbs_up(self, tmp_path):
         from observability.feedback import FeedbackCapture
         fb = FeedbackCapture(log_path=tmp_path / "feedback_log.jsonl")
-        fb.thumbs_up(job_id="job-001", stage="cover_letter", comment="Great!")
+        fb.thumbs_up("cover_letter", job_id="job-001")
         lines = (tmp_path / "feedback_log.jsonl").read_text().strip().split("\n")
         entry = json.loads(lines[0])
-        assert entry["rating"] == "up"
-        assert entry["stage"] == "cover_letter"
+        assert entry["rating"] == "thumbs_up"
+        assert entry["feature"] == "cover_letter"
 
     def test_feedback_acceptance_rates(self, tmp_path):
         from observability.feedback import FeedbackCapture
         fb = FeedbackCapture(log_path=tmp_path / "feedback_log.jsonl")
         for _ in range(7):
-            fb.thumbs_up("j1", "cover_letter")
+            fb.thumbs_up("cover_letter", job_id="j1")
         for _ in range(3):
-            fb.thumbs_down("j2", "cover_letter")
+            fb.thumbs_down("cover_letter", job_id="j2")
         rates = fb.get_acceptance_rates()
         assert "cover_letter" in rates
         assert rates["cover_letter"]["acceptance_rate"] == pytest.approx(70.0, abs=1)
