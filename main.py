@@ -18,10 +18,9 @@ Full pipeline every hour:
   8b. ATS scan + resume tailoring + cold outreach
   9. Save    → SQLite + Notion/Airtable sync
   10. Alerts → Email + Telegram + WhatsApp
-  10b. Gmail parser → auto-update stages
-  10c. Morning briefing + timing optimizer
-  11. Apply   → LinkedIn Easy Apply auto-submit
-  12. Upskill → Weekly skill gap + market pulse analysis
+  11. Apply  → LinkedIn Easy Apply auto-submit (top matches)
+  12. Housekeeping → Gmail status sync + morning briefing + timing
+  13. Upskill → Weekly skill gap + market pulse analysis
 
 Usage:
   python main.py                  # Hourly agent + dashboard
@@ -75,6 +74,7 @@ from scrapers.newgrad_scraper import NewGradScraper
 from alerts.email_alert import EmailAlert
 from alerts.telegram_alert import TelegramAlert
 from database.db import JobDatabase
+from app.security.input_guard import InputGuard
 
 # Round 3 imports
 from ai.hiring_signals import HiringSignalMonitor
@@ -205,6 +205,15 @@ def run_pipeline(config: dict, resume: str):
         _print_stats(db)
         return
 
+    # 3b. Input Guard — sanitize + block injection/scam BEFORE any LLM sees the text
+    new_jobs, guard_blocked = InputGuard().batch_validate_jobs(new_jobs)
+    if guard_blocked:
+        logger.info(f"🛡️  [3b] InputGuard blocked {len(guard_blocked)} jobs (scam/injection)")
+    if not new_jobs:
+        console.print("[yellow]All new jobs blocked by InputGuard this run.[/yellow]")
+        _print_stats(db)
+        return
+
     # 4. AI Score
     logger.info("🧠 [4/11] AI scoring...")
     scored_jobs = JobScorer(config, resume).score_jobs(new_jobs)
@@ -270,7 +279,7 @@ def run_pipeline(config: dict, resume: str):
         for r in opt_results:
             # Attach tailored resume back to job dict for saving
             for j in scored_jobs:
-                if j.get("job_url") == r.job_url:
+                if (j.get("job_url") or j.get("url")) == r.job_url:
                     j["tailored_resume"] = r.tailored_resume
                     j["resume_optimization_summary"] = r.summary()
                     break
@@ -328,15 +337,22 @@ def run_pipeline(config: dict, resume: str):
         db.mark_notified([j["url"] for j in qualifying])
     _check_followups(config, db)
 
-    # 10b. Gmail parser — auto-update application status from inbox
+    # 11. Auto-Apply (ACT) — apply to the very top matches for this run
+    logger.info("🚀 [11] Auto-apply (top matches)...")
+    telegram = TelegramAlert(config)
+    for job in AutoApplier(config).apply_jobs(scored_jobs, db):
+        telegram.send_applied_notification(job)
+
+    # 12. Housekeeping — side tasks that aren't about this run's new jobs
+    #   a) Gmail sync: update the status of PAST applications from the inbox
     if config.get("gmail_parser", {}).get("enabled"):
         try:
-            logger.info("📧 [10b] Parsing Gmail for status updates...")
+            logger.info("📧 [12a] Parsing Gmail for status updates...")
             GmailParser(config).process_and_update(db)
         except Exception as e:
             logger.warning(f"Gmail parser error: {e}")
 
-    # 10c. Morning briefing + timing optimizer
+    #   b) Morning briefing (first run of the day only)
     daily = DailyRoutine(config)
     quota = daily.get_quota_status(db)
     if quota["applied_today"] == 0 and _run_counter == 1:
@@ -349,7 +365,8 @@ def run_pipeline(config: dict, resume: str):
                 WhatsAppAlert(config).send_morning_briefing(briefing[:500])
             except Exception:
                 pass
-    # Timing optimizer: warn if applying at bad time
+
+    #   c) Timing optimizer: log the optimal application window
     timing_cfg = config.get("timing", {})
     if timing_cfg.get("warn_if_suboptimal", True):
         try:
@@ -361,12 +378,6 @@ def run_pipeline(config: dict, resume: str):
                                f"Best time: {to.get_optimal_time()['optimal_window']}")
         except Exception:
             pass
-
-    # 11. Auto-Apply
-    logger.info("🚀 [11/11] Auto-apply...")
-    telegram = TelegramAlert(config)
-    for job in AutoApplier(config).apply_jobs(scored_jobs, db):
-        telegram.send_applied_notification(job)
 
     elapsed = (datetime.utcnow() - start).total_seconds()
     _print_run_summary(all_scraped, filtered_jobs, new_jobs, scored_jobs, qualifying, elapsed)
@@ -494,12 +505,15 @@ def main():
         console.print(Panel(f"[bold]System Design Plan — {args.system_design}[/bold]", style="cyan"))
         console.print(f"Topics: {', '.join(plan['company_topics'][:5])}")
         console.print(f"Style: {plan['company_style']}")
+        if plan.get("llm_plan"):
+            console.print(plan["llm_plan"])
+        return
 
     if args.optimize_resume:
         from ai.resume_optimizer import ResumeOptimizer
         db = JobDatabase(config.get("database", {}).get("path", "jobs.db"))
         jobs = db.get_all_jobs(limit=500)
-        target = next((j for j in jobs if j.get("job_url") == args.optimize_resume), None)
+        target = next((j for j in jobs if (j.get("job_url") or j.get("url")) == args.optimize_resume), None)
         if not target:
             console.print(f"[red]Job URL not found in DB: {args.optimize_resume}[/red]")
             return
@@ -515,9 +529,6 @@ def main():
         console.print(f"[bold]Optimizing resumes for top {len(top_jobs)} jobs...[/bold]")
         results = ResumeOptimizer(config, resume).batch_optimize(top_jobs, min_score=0)
         console.print(f"\n✅ Done — {len(results)} resumes saved to resumes/tailored/")
-        return
-        if plan.get("llm_plan"):
-            console.print(plan["llm_plan"])
         return
 
     if args.career_advice:

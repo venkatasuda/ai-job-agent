@@ -384,7 +384,7 @@ class ResumeOptimizer:
                 "and create resume.txt with your full resume text."
             )
 
-        job_url = job.get("job_url", "")
+        job_url = job.get("job_url") or job.get("url", "")
         cache_key = self._job_key(job_url)
 
         if not force and cache_key in self._cache:

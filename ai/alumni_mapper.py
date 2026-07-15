@@ -203,7 +203,7 @@ class AlumniMapper:
             field=self.new_grad_cfg.get("field", "Computer Science"),
             school=self.school or "our university",
             job_title=job.get("title", "Software Engineer"),
-            job_url=job.get("job_url", ""),
+            job_url=job.get("job_url") or job.get("url", ""),
         ), max_tokens=400)
 
     def record_outreach(self, alumni_id: str, method: str):

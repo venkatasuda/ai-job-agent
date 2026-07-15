@@ -73,7 +73,7 @@ class StudyGroup:
             "shared_at": datetime.utcnow().isoformat(),
             "title": job.get("title"),
             "company": job.get("company"),
-            "url": job.get("job_url"),
+            "url": job.get("job_url") or job.get("url"),
             "score": job.get("score"),
             "comment": comment,
             "claimed_by": None,

@@ -167,7 +167,7 @@ python scripts/migrate.py
 python scripts/healthcheck.py
 
 # Run once
-python main.py --run-once
+python main.py --once
 
 # Dashboard
 streamlit run dashboard/app.py

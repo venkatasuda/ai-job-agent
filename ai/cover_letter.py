@@ -15,6 +15,8 @@ import logging
 import os
 from typing import Dict
 
+from app.security.output_filter import OutputFilter
+
 logger = logging.getLogger(__name__)
 
 # ── Prompts ──────────────────────────────────────────────────────────────────
@@ -167,6 +169,13 @@ class CoverLetterGenerator:
                 title=title, company=company, description=description,
                 draft=draft, review=review
             ), max_tokens=600)
+
+        # Output filter — strip placeholders, enforce length, flag missing company name
+        validation = OutputFilter().validate_cover_letter(final_cl, job)
+        if validation.issues:
+            logger.debug(f"  CL output issues [{company}]: {validation.issues}")
+        if validation.output:
+            final_cl = validation.output
 
         # Append signature
         name = self.profile.get("name", "")
