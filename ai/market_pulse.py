@@ -18,7 +18,7 @@ import logging
 import os
 import re
 from collections import Counter
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List
 
@@ -135,7 +135,7 @@ class MarketPulse:
 
     def generate_report(self, db) -> str:
         """Generate weekly market pulse report from DB data."""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         week_ago = (now - timedelta(days=7)).isoformat()
         two_weeks_ago = (now - timedelta(days=14)).isoformat()
 

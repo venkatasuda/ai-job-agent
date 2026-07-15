@@ -15,7 +15,7 @@ Data sources:
 
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -232,7 +232,7 @@ class LeetCodeRecommender:
         """Get today's recommended problem (1-per-day habit)."""
         solved = set(self._progress.get("solved", []))
         # Rotate through topics day by day
-        day_of_year = datetime.utcnow().timetuple().tm_yday
+        day_of_year = datetime.now(timezone.utc).timetuple().tm_yday
         topics = list(TOPIC_PROBLEMS.keys())
         today_topic = topics[day_of_year % len(topics)]
         for problem in TOPIC_PROBLEMS.get(today_topic, []):

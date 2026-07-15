@@ -18,7 +18,7 @@ import logging
 import os
 import json
 from typing import Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -122,7 +122,7 @@ class MockInterviewSession:
         self.round_style = ROUND_STYLES.get(round_type, ROUND_STYLES["behavioral"])
         self.history: List[Dict] = []  # [{"question": ..., "answer": ..., "feedback": ...}]
         self.current_question: Optional[str] = None
-        self.session_id = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        self.session_id = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
         self._client = None
         self._started = False
 

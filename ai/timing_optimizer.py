@@ -16,7 +16,7 @@ Tracks your own application timing vs. callback data to personalize.
 
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -72,7 +72,7 @@ class TimingOptimizer:
     def record_application(self, job_id: str, company: str,
                            submitted_at: Optional[datetime] = None):
         """Record when an application was submitted."""
-        submitted_at = submitted_at or datetime.utcnow()
+        submitted_at = submitted_at or datetime.now(timezone.utc)
         self._history.append({
             "job_id": job_id,
             "company": company,
@@ -88,7 +88,7 @@ class TimingOptimizer:
         for entry in self._history:
             if entry.get("job_id") == job_id:
                 entry["got_callback"] = True
-                entry["callback_date"] = datetime.utcnow().isoformat()
+                entry["callback_date"] = datetime.now(timezone.utc).isoformat()
         self._save_history()
 
     def record_no_response(self, job_id: str):
@@ -105,7 +105,7 @@ class TimingOptimizer:
         # Get personal best from history
         personal_best_day, personal_best_hour = self._get_personal_best()
 
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         # Find next optimal window
         best_window = self._find_next_window(now, target_day=personal_best_day or 1,
                                               target_hour=personal_best_hour or 9)
@@ -185,7 +185,7 @@ class TimingOptimizer:
         try:
             posted = datetime.fromisoformat(date_posted.replace("Z", "+00:00"))
             posted = posted.replace(tzinfo=None)
-            age = (datetime.utcnow() - posted).days
+            age = (datetime.now(timezone.utc) - posted).days
         except Exception:
             return {"age_days": -1, "urgency": "Unknown", "apply_now": False}
 

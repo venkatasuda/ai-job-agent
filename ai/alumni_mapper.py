@@ -22,7 +22,7 @@ import logging
 import os
 import re
 import requests
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -119,7 +119,7 @@ class AlumniMapper:
             "graduation_year": graduation_year,
             "department": department,
             "school": self.school,
-            "added_at": datetime.utcnow().isoformat(),
+            "added_at": datetime.now(timezone.utc).isoformat(),
             "outreach_sent": False,
             "responded": False,
             "status": "not_contacted",
@@ -211,10 +211,10 @@ class AlumniMapper:
         if alumni:
             alumni["outreach_sent"] = True
             alumni["status"] = "contacted"
-            alumni["contacted_at"] = datetime.utcnow().isoformat()
+            alumni["contacted_at"] = datetime.now(timezone.utc).isoformat()
         self._alumni.setdefault("outreach_log", []).append({
             "alumni_id": alumni_id, "method": method,
-            "date": datetime.utcnow().isoformat(), "responded": False,
+            "date": datetime.now(timezone.utc).isoformat(), "responded": False,
         })
         self._save_alumni()
 

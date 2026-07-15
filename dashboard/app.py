@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import streamlit as st
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from database.db import JobDatabase
 
@@ -130,7 +130,7 @@ def _posted_label(date_posted: str) -> str:
     try:
         from datetime import date
         posted = datetime.fromisoformat(date_posted[:10]).date()
-        days = (datetime.utcnow().date() - posted).days
+        days = (datetime.now(timezone.utc).date() - posted).days
         if days == 0:
             return "📅 Today"
         if days == 1:
@@ -352,7 +352,7 @@ def render_followups_tab():
         st.info("No applied jobs yet. Apply to jobs and mark them as Applied to track follow-ups.")
         return
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     CADENCE = [
         {"day": 5,  "label": "First Follow-Up",  "color": "#f59e0b"},
         {"day": 10, "label": "Second Follow-Up",  "color": "#ef4444"},

@@ -23,7 +23,7 @@ import logging
 import os
 import json
 from typing import Dict, List
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -195,7 +195,7 @@ class LinkedInAutomation:
         Week 4: Reflection / learning post
         """
         plan = []
-        today = datetime.utcnow().date()
+        today = datetime.now(timezone.utc).date()
 
         # Week 1: Open to work
         plan.append({
@@ -232,7 +232,7 @@ class LinkedInAutomation:
             return []
         try:
             plan = json.loads(self._queue_path.read_text())
-            today = datetime.utcnow().date().isoformat()
+            today = datetime.now(timezone.utc).date().isoformat()
             return [p for p in plan if p.get("date", "") <= today and p.get("status") != "posted"]
         except Exception:
             return []

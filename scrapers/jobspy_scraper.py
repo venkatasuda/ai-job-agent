@@ -5,7 +5,7 @@ LinkedIn, Indeed, Glassdoor, Google Jobs, ZipRecruiter simultaneously.
 
 import logging
 from typing import List, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ class JobSpyScraper:
             "date_posted": str(job.get("date_posted", "")),
             "source": str(job.get("site", "jobspy")),
             "is_remote": bool(job.get("is_remote", False)),
-            "scraped_at": datetime.utcnow().isoformat(),
+            "scraped_at": datetime.now(timezone.utc).isoformat(),
             "score": None,
             "cover_letter": None,
             "applied": False,

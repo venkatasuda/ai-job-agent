@@ -11,7 +11,7 @@ This catches jobs that never appear on LinkedIn/Indeed.
 import logging
 import requests
 from typing import List, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 from tenacity import retry, stop_after_attempt, wait_exponential
 
 logger = logging.getLogger(__name__)
@@ -40,7 +40,7 @@ def _base_job(company: str, source: str) -> Dict[str, Any]:
         "date_posted": "",
         "source": source,
         "is_remote": False,
-        "scraped_at": datetime.utcnow().isoformat(),
+        "scraped_at": datetime.now(timezone.utc).isoformat(),
         "score": None,
         "cover_letter": None,
         "applied": False,

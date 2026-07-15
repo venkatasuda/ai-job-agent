@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Literal, Optional
 
@@ -54,7 +54,7 @@ class FeedbackCapture:
     ) -> bool:
         """Record a piece of feedback."""
         entry = {
-            "ts": datetime.utcnow().isoformat(),
+            "ts": datetime.now(timezone.utc).isoformat(),
             "feature": feature,
             "rating": rating,
             "job_id": job_id,
@@ -80,7 +80,7 @@ class FeedbackCapture:
     def load_log(self, days: int = 30) -> List[Dict]:
         if not self.log_path.exists():
             return []
-        cutoff = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
         entries = []
         with open(self.log_path, encoding="utf-8") as f:
             for line in f:

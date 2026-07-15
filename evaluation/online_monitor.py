@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -40,7 +40,7 @@ class OnlineMonitor:
     def snapshot(self) -> Dict:
         """Take a snapshot of current system quality metrics."""
         metrics = {
-            "ts": datetime.utcnow().isoformat(),
+            "ts": datetime.now(timezone.utc).isoformat(),
             **self._score_distribution_metrics(),
             **self._callback_rate_metrics(),
             **self._cost_metrics(),
@@ -153,7 +153,7 @@ class OnlineMonitor:
         """Load metrics history for trend analysis."""
         if not self.METRICS_PATH.exists():
             return []
-        cutoff = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
         history = []
         with open(self.METRICS_PATH) as f:
             for line in f:

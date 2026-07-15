@@ -22,7 +22,7 @@ import logging
 import time
 from contextlib import contextmanager
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, Generator, List, Optional
 from uuid import uuid4
@@ -52,13 +52,13 @@ class Span:
 
     def complete(self, output_count: int = 0):
         self.finished_at = time.monotonic()
-        self.duration_ms = round((self.finished_at - self.started_at) * 1000, 1)
+        self.duration_ms = round((self.finished_at - self.started_at) * 1000, 3)
         self.status = "completed"
         self.output_count = output_count
 
     def fail(self, error: str):
         self.finished_at = time.monotonic()
-        self.duration_ms = round((self.finished_at - self.started_at) * 1000, 1)
+        self.duration_ms = round((self.finished_at - self.started_at) * 1000, 3)
         self.status = "error"
         self.error = error
 
@@ -89,7 +89,7 @@ class PipelineTracer:
 
     def __init__(self, run_id: Optional[str] = None, trace_dir: Optional[Path] = None):
         self.run_id = run_id or str(uuid4())[:12]
-        self.started_at = datetime.utcnow().isoformat()
+        self.started_at = datetime.now(timezone.utc).isoformat()
         self.spans: List[Span] = []
         self._active: Optional[Span] = None
         self.traces_dir = Path(trace_dir) if trace_dir else self.TRACES_DIR

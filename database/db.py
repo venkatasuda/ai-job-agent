@@ -8,7 +8,7 @@ SQLite database layer.
 import sqlite3
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Optional
 
 logger = logging.getLogger(__name__)
@@ -126,7 +126,7 @@ class JobDatabase:
 
     def is_seen(self, url: str) -> bool:
         """Return True if this URL was seen within the dedupe window."""
-        cutoff = (datetime.utcnow() - timedelta(days=self.dedupe_window_days)).isoformat()
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=self.dedupe_window_days)).isoformat()
         with self._conn() as conn:
             row = conn.execute(
                 "SELECT 1 FROM jobs WHERE url = ? AND scraped_at > ?", (url, cutoff)
@@ -170,7 +170,7 @@ class JobDatabase:
                             job.get("cover_letter", ""),
                             1 if job.get("applied") else 0,
                             job.get("applied_at", ""),
-                            job.get("scraped_at", datetime.utcnow().isoformat()),
+                            job.get("scraped_at", datetime.now(timezone.utc).isoformat()),
                             0,
                         ),
                     )
@@ -203,13 +203,13 @@ class JobDatabase:
             conn.execute(
                 "UPDATE jobs SET applied = 1, applied_at = ?, interview_stage = 'applied', "
                 "interview_stage_updated_at = ? WHERE url = ?",
-                (datetime.utcnow().isoformat(), datetime.utcnow().isoformat(), url),
+                (datetime.now(timezone.utc).isoformat(), datetime.now(timezone.utc).isoformat(), url),
             )
 
     def update_stage(self, url: str, stage: str, notes: str = ""):
         """Update interview pipeline stage."""
         import json
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()
         with self._conn() as conn:
             # Append to interview_dates log
             row = conn.execute("SELECT interview_dates FROM jobs WHERE url = ?", (url,)).fetchone()
@@ -234,7 +234,7 @@ class JobDatabase:
 
     def mark_response(self, url: str, response_type: str = "positive"):
         """Record that a response was received."""
-        now = datetime.utcnow().isoformat()
+        now = datetime.now(timezone.utc).isoformat()
         with self._conn() as conn:
             conn.execute(
                 "UPDATE jobs SET response_received = 1, response_date = ? WHERE url = ?",
@@ -278,7 +278,7 @@ class JobDatabase:
     def get_daily_stats(self, date: str = None) -> Dict:
         """Get applications sent on a specific date (default today)."""
         if date is None:
-            date = datetime.utcnow().date().isoformat()
+            date = datetime.now(timezone.utc).date().isoformat()
         with self._conn() as conn:
             applied_today = conn.execute(
                 "SELECT COUNT(*) FROM jobs WHERE applied=1 AND applied_at LIKE ?",

@@ -24,7 +24,7 @@ import re
 import base64
 import json
 from typing import Dict, List, Optional, Tuple
-from datetime import datetime
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -182,7 +182,7 @@ class GmailParser:
         try:
             # Search for job-related emails
             query = (
-                f"after:{(datetime.utcnow().date()).strftime('%Y/%m/%d')} "
+                f"after:{(datetime.now(timezone.utc).date()).strftime('%Y/%m/%d')} "
                 f"(subject:(application OR interview OR offer OR recruiter OR position OR role OR opportunity))"
             )
             result = service.users().messages().list(

@@ -8,7 +8,7 @@ import logging
 import os
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Dict
 
 logger = logging.getLogger(__name__)
@@ -115,7 +115,7 @@ class EmailAlert:
         sender = self.cfg.get("sender_email", "")
         password = self.cfg.get("sender_password") or os.environ.get("EMAIL_PASSWORD", "")
         recipient = self.cfg.get("recipient_email", sender)
-        run_time = datetime.utcnow().strftime("%Y-%m-%d %H:%M")
+        run_time = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
 
         msg = MIMEMultipart("alternative")
         msg["Subject"] = f"🤖 {len(eligible)} New Job Matches — AI Agent ({run_time})"

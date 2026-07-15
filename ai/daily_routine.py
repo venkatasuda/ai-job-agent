@@ -20,7 +20,7 @@ Sends via:
 import json
 import logging
 import os
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -261,7 +261,7 @@ class DailyRoutine:
 
         # Top new jobs from last 24h
         all_jobs = db.get_all_jobs(limit=200)
-        yesterday = (datetime.utcnow() - timedelta(hours=24)).isoformat()
+        yesterday = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
         new_jobs = [j for j in all_jobs if (j.get("scraped_at") or "") > yesterday and not j.get("applied")]
         top_new = sorted(new_jobs, key=lambda j: j.get("score") or 0, reverse=True)[:5]
 
@@ -283,7 +283,7 @@ class DailyRoutine:
         pending = [
             j for j in all_jobs
             if j.get("applied") and not j.get("response_received")
-            and j.get("applied_at", "") < (datetime.utcnow() - timedelta(days=7)).isoformat()
+            and j.get("applied_at", "") < (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
         ]
         pending_text = f"  {len(pending)} applications with no response yet (7+ days)"
 

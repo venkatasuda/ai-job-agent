@@ -22,7 +22,7 @@ import logging
 import os
 import re
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -275,7 +275,7 @@ class VoiceInterviewSession:
             "total_filler_words": total_fillers,
             "grade_distribution": {g: grades.count(g) for g in set(grades)},
             "top_improvement": self.history[-1].get("improvements", []),
-            "session_date": datetime.utcnow().isoformat(),
+            "session_date": datetime.now(timezone.utc).isoformat(),
         }
 
     def save_session(self):
@@ -287,7 +287,7 @@ class VoiceInterviewSession:
             except Exception:
                 pass
         all_sessions.append({
-            "date": datetime.utcnow().isoformat(),
+            "date": datetime.now(timezone.utc).isoformat(),
             "scorecard": self.get_session_scorecard(),
             "history": self.history,
         })

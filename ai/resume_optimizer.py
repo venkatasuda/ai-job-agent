@@ -27,7 +27,7 @@ import json
 import logging
 import re
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -194,7 +194,7 @@ class OptimizationResult:
     red_flags: list[str]
     what_to_tell_recruiter: str
     output_file: str
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
     @property
     def score_gain(self) -> int:

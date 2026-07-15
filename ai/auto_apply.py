@@ -14,7 +14,7 @@ Safety features:
 import logging
 import asyncio
 from typing import Dict, List
-from datetime import datetime
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -140,7 +140,7 @@ class AutoApplier:
 
             if success:
                 job["applied"] = True
-                job["applied_at"] = datetime.utcnow().isoformat()
+                job["applied_at"] = datetime.now(timezone.utc).isoformat()
                 db.mark_applied(job["url"])
                 applied.append(job)
                 self._applied_count += 1

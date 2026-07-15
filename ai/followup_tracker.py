@@ -7,7 +7,7 @@ Cadence: Day 5 (first follow-up), Day 10 (second / mark ghosted), Day 14 (archiv
 
 import logging
 from typing import List, Dict
-from datetime import datetime
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +27,7 @@ class FollowUpTracker:
         jobs = db.get_all_jobs()
         applied = [j for j in jobs if j.get("applied") and j.get("applied_at")]
         due = []
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         for job in applied:
             try:
                 applied_at = datetime.fromisoformat(job["applied_at"])

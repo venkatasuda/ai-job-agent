@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import json
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -65,7 +65,7 @@ class CostTracker:
         """Record a single LLM call. Returns cost in USD."""
         cost = self._calculate_cost(model, tokens_in, tokens_out)
         entry = {
-            "ts": datetime.utcnow().isoformat(),
+            "ts": datetime.now(timezone.utc).isoformat(),
             "run_id": run_id,
             "model": model,
             "stage": stage,
@@ -96,7 +96,7 @@ class CostTracker:
         """Load cost log for the past N days."""
         if not self.log_path.exists():
             return []
-        cutoff = (datetime.utcnow() - timedelta(days=days)).isoformat()
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
         entries = []
         with open(self.log_path, encoding="utf-8") as f:
             for line in f:

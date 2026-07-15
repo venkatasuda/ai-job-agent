@@ -17,7 +17,7 @@ Also works solo as a personal accountability tracker.
 import json
 import logging
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -55,12 +55,12 @@ class StudyGroup:
             "name": self.user_name,
             "role_target": role_target,
             "location": location,
-            "joined_at": datetime.utcnow().isoformat(),
+            "joined_at": datetime.now(timezone.utc).isoformat(),
             "applications_today": 0,
             "applications_total": 0,
             "interviews": 0,
             "offers": 0,
-            "last_active": datetime.utcnow().isoformat(),
+            "last_active": datetime.now(timezone.utc).isoformat(),
         }
         self._save_data()
         logger.info(f"Joined study group as {self.user_name}")
@@ -70,7 +70,7 @@ class StudyGroup:
         """Share a job discovery with the group."""
         lead = {
             "shared_by": self.user_name,
-            "shared_at": datetime.utcnow().isoformat(),
+            "shared_at": datetime.now(timezone.utc).isoformat(),
             "title": job.get("title"),
             "company": job.get("company"),
             "url": job.get("job_url") or job.get("url"),
@@ -97,8 +97,8 @@ class StudyGroup:
             }
         claimed[company] = {
             "claimer": self.user_name,
-            "claimed_at": datetime.utcnow().isoformat(),
-            "expires_at": (datetime.utcnow() + timedelta(days=14)).isoformat(),
+            "claimed_at": datetime.now(timezone.utc).isoformat(),
+            "expires_at": (datetime.now(timezone.utc) + timedelta(days=14)).isoformat(),
         }
         self._save_data()
         return {"status": "success", "message": f"You've claimed {company} for 14 days"}
@@ -108,7 +108,7 @@ class StudyGroup:
         claimed = self._data.get("claimed_companies", {})
         if company in claimed:
             entry = claimed[company]
-            if entry.get("expires_at", "") > datetime.utcnow().isoformat():
+            if entry.get("expires_at", "") > datetime.now(timezone.utc).isoformat():
                 claimer = entry["claimer"]
                 if claimer != self.user_name:
                     return claimer
@@ -120,7 +120,7 @@ class StudyGroup:
         """Share interview questions/experience with the group."""
         experience = {
             "shared_by": self.user_name,
-            "shared_at": datetime.utcnow().isoformat(),
+            "shared_at": datetime.now(timezone.utc).isoformat(),
             "company": company,
             "round_type": round_type,
             "questions": questions,
@@ -148,11 +148,11 @@ class StudyGroup:
             members[self.user_name]["applications_total"] = (
                 members[self.user_name].get("applications_total", 0) + applications_today
             )
-            members[self.user_name]["last_active"] = datetime.utcnow().isoformat()
+            members[self.user_name]["last_active"] = datetime.now(timezone.utc).isoformat()
 
         checkin = {
             "user": self.user_name,
-            "date": datetime.utcnow().date().isoformat(),
+            "date": datetime.now(timezone.utc).date().isoformat(),
             "applications_today": applications_today,
             "mood": mood,
             "wins": wins,
@@ -165,7 +165,7 @@ class StudyGroup:
         today_total = sum(
             c.get("applications_today", 0)
             for c in self._data["daily_checkins"]
-            if c.get("date") == datetime.utcnow().date().isoformat()
+            if c.get("date") == datetime.now(timezone.utc).date().isoformat()
         )
         member_count = len(members)
         return {

@@ -18,7 +18,7 @@ No ML frameworks needed — uses simple weighted scoring.
 
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -103,7 +103,7 @@ class PersonalScoringModel:
             "job_id": job.get("id"),
             "company": company,
             "action": action,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         })
         # Keep last 1000 interactions
         self._prefs["interactions"] = self._prefs["interactions"][-1000:]

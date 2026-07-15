@@ -19,7 +19,7 @@ have undocumented RSS feeds that work without authentication.
 import json
 import logging
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 from urllib.parse import quote
@@ -96,7 +96,7 @@ class JobBoardSubscriber:
                     "job_url": link,
                     "description": description,
                     "source": source,
-                    "date_posted": pub_date or datetime.utcnow().isoformat(),
+                    "date_posted": pub_date or datetime.now(timezone.utc).isoformat(),
                     "is_remote": bool(re.search(r"(?i)remote", title + description)),
                 }
                 jobs.append(job)
@@ -124,7 +124,7 @@ class JobBoardSubscriber:
                     jobs = self._parse_rss(resp.text, name)
                     all_jobs.extend(jobs)
                     self._feed_state.setdefault("last_fetched", {})[name] = (
-                        datetime.utcnow().isoformat()
+                        datetime.now(timezone.utc).isoformat()
                     )
                     logger.info(f"RSS {name}: {len(jobs)} new jobs")
             except Exception as e:
@@ -192,7 +192,7 @@ class JobBoardSubscriber:
                     "description": clean[:1500],
                     "source": "hn_who_is_hiring",
                     "is_remote": bool(re.search(r"(?i)remote", clean)),
-                    "date_posted": datetime.utcnow().isoformat(),
+                    "date_posted": datetime.now(timezone.utc).isoformat(),
                 }
                 jobs.append(job)
             logger.info(f"HN Who is Hiring: {len(jobs)} postings")
@@ -220,6 +220,6 @@ class JobBoardSubscriber:
         jobs = []
         jobs.extend(self.fetch_rss_feeds())
         # HN Who is Hiring runs monthly — only on first day of month
-        if datetime.utcnow().day == 1:
+        if datetime.now(timezone.utc).day == 1:
             jobs.extend(self.fetch_hn_who_is_hiring())
         return jobs

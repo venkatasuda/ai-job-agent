@@ -25,7 +25,7 @@ import re
 import json
 import requests
 from typing import Dict, List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -93,7 +93,7 @@ class HiringSignalMonitor:
             try:
                 data = json.loads(self._cache_path.read_text())
                 # Expire entries older than 3 days
-                cutoff = (datetime.utcnow() - timedelta(days=3)).isoformat()
+                cutoff = (datetime.now(timezone.utc) - timedelta(days=3)).isoformat()
                 return {k: v for k, v in data.items() if v.get("_cached_at", "") > cutoff}
             except Exception:
                 pass
@@ -156,7 +156,7 @@ class HiringSignalMonitor:
         result = self._llm_json(SIGNAL_ANALYSIS_PROMPT.format(
             company=company, news_text=news[:2000]
         ))
-        result["_cached_at"] = datetime.utcnow().isoformat()
+        result["_cached_at"] = datetime.now(timezone.utc).isoformat()
         result["_company"] = company
         self._cache[company] = result
         self._save_cache()

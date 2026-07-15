@@ -39,7 +39,7 @@ import sys
 import subprocess
 import threading
 import yaml
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from rich.console import Console
@@ -150,7 +150,7 @@ def load_resume(path: str) -> str:
 def run_pipeline(config: dict, resume: str):
     global _run_counter
     _run_counter += 1
-    start = datetime.utcnow()
+    start = datetime.now(timezone.utc)
     console.print(Panel(
         f"🤖 [bold green]AI Job Agent — Run #{_run_counter}[/bold green]  {start.strftime('%Y-%m-%d %H:%M UTC')}",
         style="green"))
@@ -379,7 +379,7 @@ def run_pipeline(config: dict, resume: str):
         except Exception:
             pass
 
-    elapsed = (datetime.utcnow() - start).total_seconds()
+    elapsed = (datetime.now(timezone.utc) - start).total_seconds()
     _print_run_summary(all_scraped, filtered_jobs, new_jobs, scored_jobs, qualifying, elapsed)
     _print_stats(db)
 
@@ -419,7 +419,7 @@ def run_upskill(config: dict, resume: str, db=None):
     jobs = db.get_all_jobs(limit=200)
     analyzer = UpskillAnalyzer(config, resume)
     report = analyzer.analyze(jobs)
-    path = f"upskill_report_{datetime.utcnow().strftime('%Y%m%d_%H%M')}.md"
+    path = f"upskill_report_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M')}.md"
     analyzer.save_report(report, path)
     console.print(f"[green]Upskill report saved: {path}[/green]")
 

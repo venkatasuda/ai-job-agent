@@ -17,7 +17,7 @@ from __future__ import annotations
 import argparse
 import random
 import sys
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from uuid import uuid4
 
@@ -140,7 +140,7 @@ def seed(count: int = 20, clear: bool = False):
         conn.commit()
         print("🗑️  Cleared existing jobs")
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     inserted = 0
 
     for i, job_template in enumerate(SAMPLE_JOBS[:count]):

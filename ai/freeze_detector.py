@@ -17,7 +17,7 @@ import logging
 import os
 import re
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -76,7 +76,7 @@ class FreezeDetector:
         if self._cache_path.exists():
             try:
                 data = json.loads(self._cache_path.read_text())
-                cutoff = (datetime.utcnow() - timedelta(days=7)).isoformat()
+                cutoff = (datetime.now(timezone.utc) - timedelta(days=7)).isoformat()
                 return {k: v for k, v in data.items() if v.get("_cached_at", "") > cutoff}
             except Exception:
                 pass
@@ -129,7 +129,7 @@ class FreezeDetector:
         """Count how many jobs this company had this vs last week."""
         try:
             all_jobs = db.get_all_jobs(limit=2000)
-            now = datetime.utcnow()
+            now = datetime.now(timezone.utc)
             week_ago = (now - timedelta(days=7)).isoformat()
             two_weeks_ago = (now - timedelta(days=14)).isoformat()
             this_week = sum(1 for j in all_jobs
@@ -182,7 +182,7 @@ class FreezeDetector:
             result = {"status": rule_result or "UNCERTAIN", "confidence": "Low",
                       "recommendation": "Apply with caution", "recheck_in_days": 3}
 
-        result["_cached_at"] = datetime.utcnow().isoformat()
+        result["_cached_at"] = datetime.now(timezone.utc).isoformat()
         result["_company"] = company
         self._cache[company] = result
         self._save_cache()

@@ -24,7 +24,7 @@ import logging
 import os
 import re
 import requests
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 from urllib.parse import quote
@@ -80,7 +80,7 @@ class EventFinder:
         if self._cache_path.exists():
             try:
                 data = json.loads(self._cache_path.read_text())
-                cutoff = (datetime.utcnow() - timedelta(hours=12)).isoformat()
+                cutoff = (datetime.now(timezone.utc) - timedelta(hours=12)).isoformat()
                 if data.get("_fetched_at", "") > cutoff:
                     return data
             except Exception:
@@ -89,7 +89,7 @@ class EventFinder:
 
     def _save_cache(self, events: List[Dict]):
         self._cache_path.write_text(json.dumps({
-            "events": events, "_fetched_at": datetime.utcnow().isoformat()
+            "events": events, "_fetched_at": datetime.now(timezone.utc).isoformat()
         }, indent=2))
 
     def _search_eventbrite(self, location: str, keywords: List[str]) -> List[Dict]:

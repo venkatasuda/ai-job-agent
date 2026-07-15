@@ -8,7 +8,7 @@ Run: pytest tests/test_pipeline.py -v
 
 import json
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -58,7 +58,7 @@ def two_jobs():
             "is_remote": False,
             "salary_min": 200000,
             "salary_max": 300000,
-            "date_posted": datetime.utcnow().isoformat(),
+            "date_posted": datetime.now(timezone.utc).isoformat(),
         },
         {
             "id": "test-002",
@@ -71,7 +71,7 @@ def two_jobs():
             "is_remote": True,
             "salary_min": 160000,
             "salary_max": 230000,
-            "date_posted": datetime.utcnow().isoformat(),
+            "date_posted": datetime.now(timezone.utc).isoformat(),
         },
     ]
 

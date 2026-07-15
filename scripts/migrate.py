@@ -18,7 +18,7 @@ import argparse
 import logging
 import sqlite3
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import List, Tuple
 
@@ -204,7 +204,7 @@ class MigrationRunner:
                     raise
             self.conn.execute(
                 "INSERT INTO schema_versions (migration_id, description, applied_at) VALUES (?, ?, ?)",
-                (migration_id, description, datetime.utcnow().isoformat())
+                (migration_id, description, datetime.now(timezone.utc).isoformat())
             )
             self.conn.commit()
             return True

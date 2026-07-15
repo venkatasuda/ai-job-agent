@@ -20,7 +20,7 @@ import json
 import re
 from typing import Dict, List
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -165,7 +165,7 @@ class CareerAdvisor:
             remote=str(self.profile.get("remote_ok", True)),
         ), max_tokens=1500)
 
-        advice["_generated_at"] = datetime.utcnow().isoformat()
+        advice["_generated_at"] = datetime.now(timezone.utc).isoformat()
         advice["_target_role"] = target_role
         advice["_timeline"] = timeline
 

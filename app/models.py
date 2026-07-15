@@ -9,7 +9,7 @@ These replace raw dicts — structured, validated, serializable.
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
 from uuid import uuid4
@@ -97,7 +97,7 @@ class Job(BaseModel):
 
     # Dates
     date_posted: Optional[str] = None
-    scraped_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    scraped_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
     # Compensation
     salary_min: Optional[float] = None
@@ -212,7 +212,7 @@ class PipelineRun(BaseModel):
     """Tracks a single execution of the job pipeline."""
     run_id: str = Field(default_factory=lambda: str(uuid4()))
     run_number: int = 1
-    started_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    started_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     finished_at: Optional[str] = None
     elapsed_seconds: Optional[float] = None
 
@@ -237,7 +237,7 @@ class PipelineRun(BaseModel):
     error: Optional[str] = None
 
     def complete(self):
-        self.finished_at = datetime.utcnow().isoformat()
+        self.finished_at = datetime.now(timezone.utc).isoformat()
         self.elapsed_seconds = (
             datetime.fromisoformat(self.finished_at) -
             datetime.fromisoformat(self.started_at)
@@ -257,7 +257,7 @@ class ApplicationEvent(BaseModel):
     title: str
     from_stage: str
     to_stage: str
-    occurred_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    occurred_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     source: str = "manual"  # manual | gmail_parser | auto
     notes: Optional[str] = None
 
@@ -307,7 +307,7 @@ class CompanyResearchResult(BaseModel):
     contact_name: Optional[str] = None
     contact_linkedin: Optional[str] = None
     culture_score: Optional[float] = Field(None, ge=0, le=10)
-    cached_at: str = Field(default_factory=lambda: datetime.utcnow().isoformat())
+    cached_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
 # Re-export for convenience

@@ -22,7 +22,7 @@ Setup:
 import json
 import logging
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -111,7 +111,7 @@ class DiscordJobMonitor:
             "discord_channel": channel,
             "discord_author": author,
             "discord_msg_id": msg_id,
-            "date_posted": datetime.utcnow().isoformat(),
+            "date_posted": datetime.now(timezone.utc).isoformat(),
         }
 
     def scrape(self) -> List[Dict]:
@@ -130,7 +130,7 @@ class DiscordJobMonitor:
                 "Content-Type": "application/json",
             }
             jobs = []
-            since = (datetime.utcnow() - timedelta(hours=24)).isoformat()
+            since = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
 
             for channel_id in self.channels:
                 try:

@@ -10,7 +10,7 @@ import logging
 import os
 from typing import List, Dict
 from collections import Counter
-from datetime import datetime
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -131,7 +131,7 @@ class UpskillAnalyzer:
             report = self._llm(UPSKILL_PROMPT.format(
                 resume=self.resume[:2500], n_jobs=len(jobs), skill_gaps=gap_text,
             ), max_tokens=1500)
-            timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+            timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
             return f"# Upskill Report\n_Generated: {timestamp}_\n\n{report}"
         except Exception as e:
             return f"[Upskill report failed: {e}]\n\nTop skill gaps:\n{gap_text}"

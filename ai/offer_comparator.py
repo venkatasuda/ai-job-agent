@@ -21,7 +21,7 @@ import json
 import re
 from typing import Dict, List
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -139,7 +139,7 @@ class OfferComparator:
         }
         """
         offers = self._load_offers()
-        offer["_added_at"] = datetime.utcnow().isoformat()
+        offer["_added_at"] = datetime.now(timezone.utc).isoformat()
         offers.append(offer)
         self._offers_path.write_text(json.dumps(offers, indent=2))
         logger.info(f"Offer saved: {offer.get('company')} — {offer.get('title')}")

@@ -23,7 +23,7 @@ import json
 import logging
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List
 
@@ -226,7 +226,7 @@ def run_all(config: Dict, resume: str, features: List[str] = None, save: bool = 
     # Summary
     elapsed = time.time() - start
     summary = {
-        "run_at": datetime.utcnow().isoformat(),
+        "run_at": datetime.now(timezone.utc).isoformat(),
         "elapsed_seconds": round(elapsed, 1),
         "results": all_results,
         "overall_pass_rate": round(
@@ -240,7 +240,7 @@ def run_all(config: Dict, resume: str, features: List[str] = None, save: bool = 
     logger.info(f"⏱  Elapsed: {elapsed:.1f}s")
 
     if save:
-        fname = RESULTS_DIR / f"eval_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}.json"
+        fname = RESULTS_DIR / f"eval_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}.json"
         fname.write_text(json.dumps(summary, indent=2))
         logger.info(f"💾 Saved: {fname}")
 

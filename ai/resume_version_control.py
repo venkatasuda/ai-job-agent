@@ -18,7 +18,7 @@ import hashlib
 import json
 import logging
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -51,7 +51,7 @@ class ResumeVersionControl:
                      company: str = "", job_id: str = "",
                      is_base: bool = False) -> str:
         """Save a resume version. Returns version ID."""
-        version_id = f"v_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}_{self._hash(content)}"
+        version_id = f"v_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}_{self._hash(content)}"
         path = self.base_dir / f"{version_id}.txt"
         path.write_text(content, encoding="utf-8")
 
@@ -60,7 +60,7 @@ class ResumeVersionControl:
             "label": label or (f"Tailored for {company}" if company else "Resume"),
             "company": company,
             "job_id": job_id,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
             "word_count": len(content.split()),
             "callbacks": 0,
             "rejections": 0,

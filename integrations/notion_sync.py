@@ -27,7 +27,7 @@ import json
 import logging
 import os
 import requests
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 
 logger = logging.getLogger(__name__)
@@ -94,7 +94,7 @@ class NotionSync:
             "Location": {"rich_text": [{"text": {"content": job.get("location", "")[:200]}}]},
             "Source": {"select": {"name": job.get("source", "unknown")[:100]}},
             "Remote": {"checkbox": bool(job.get("is_remote"))},
-            "Date Applied": {"date": {"start": datetime.utcnow().date().isoformat()}
+            "Date Applied": {"date": {"start": datetime.now(timezone.utc).date().isoformat()}
                             if job.get("interview_stage") != "not_applied" else None},
             "ATS Score": {"number": job.get("ats_score") or 0},
         }

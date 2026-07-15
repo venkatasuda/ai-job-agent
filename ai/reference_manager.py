@@ -21,7 +21,7 @@ import json
 import logging
 import os
 import re
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -119,7 +119,7 @@ class ReferenceManager:
             "linkedin": linkedin,
             "relationship": relationship,
             "strengths": strengths or [],
-            "added_at": datetime.utcnow().isoformat(),
+            "added_at": datetime.now(timezone.utc).isoformat(),
             "times_used": 0,
             "last_used": None,
             "status": "available",  # available | active | resting
@@ -163,13 +163,13 @@ class ReferenceManager:
         ref = self._refs["references"].get(ref_id)
         if ref:
             ref["times_used"] = ref.get("times_used", 0) + 1
-            ref["last_used"] = datetime.utcnow().isoformat()
+            ref["last_used"] = datetime.now(timezone.utc).isoformat()
             ref["status"] = "active"
         self._refs.setdefault("usage_log", []).append({
             "ref_id": ref_id,
             "job_id": job_id,
             "company": company,
-            "date": datetime.utcnow().isoformat(),
+            "date": datetime.now(timezone.utc).isoformat(),
         })
         self._save_refs()
 
@@ -182,7 +182,7 @@ class ReferenceManager:
     def check_overuse(self) -> List[str]:
         """Flag references used more than 3x in 30 days."""
         flagged = []
-        cutoff = (datetime.utcnow() - timedelta(days=30)).isoformat()
+        cutoff = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
         for ref_id, ref in self._refs["references"].items():
             recent_uses = sum(
                 1 for log in self._refs.get("usage_log", [])

@@ -20,7 +20,7 @@ import logging
 import os
 import random
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
@@ -91,10 +91,10 @@ class ABTestingEngine:
 
     def create_test(self, test_name: str, variants: List[Dict]) -> str:
         """Create a new A/B test with given variants."""
-        test_id = f"test_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
+        test_id = f"test_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
         self._tests["active_tests"][test_id] = {
             "name": test_name,
-            "created_at": datetime.utcnow().isoformat(),
+            "created_at": datetime.now(timezone.utc).isoformat(),
             "variants": {
                 v["id"]: {
                     **v,

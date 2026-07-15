@@ -17,7 +17,7 @@ import logging
 import requests
 import re
 from typing import List, Dict, Any
-from datetime import datetime
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
 
@@ -38,7 +38,7 @@ def _base_job(source: str) -> Dict[str, Any]:
         "title": "", "company": "", "location": "", "description": "",
         "url": "", "apply_url": "", "salary_min": None, "salary_max": None,
         "job_type": "fulltime", "date_posted": "", "source": source,
-        "is_remote": False, "scraped_at": datetime.utcnow().isoformat(),
+        "is_remote": False, "scraped_at": datetime.now(timezone.utc).isoformat(),
         "score": None, "cover_letter": None, "applied": False,
         "is_new_grad": True,
     }
