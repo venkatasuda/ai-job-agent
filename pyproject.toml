@@ -1,0 +1,143 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-job-agent"
+version = "2.0.0"
+description = "Production-grade AI job search agent — scrape, score, apply, track"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Venky", email = "reddysudha9942@gmail.com" }]
+keywords = ["job-search", "ai", "automation", "nlp", "llm"]
+
+dependencies = [
+    # Core scraping
+    "python-jobspy>=0.31.0",
+    "requests>=2.31.0",
+    "beautifulsoup4>=4.12.0",
+    "feedparser>=6.0.11",
+
+    # AI / LLM
+    "openai>=1.30.0",
+    "google-generativeai>=0.7.0",
+    "ollama>=0.2.0",
+
+    # Config & validation
+    "pydantic>=2.7.0",
+    "pydantic-settings>=2.3.0",
+    "python-dotenv>=1.0.0",
+    "pyyaml>=6.0.1",
+
+    # Scheduling & async
+    "apscheduler>=3.10.4",
+    "httpx>=0.27.0",
+
+    # Dashboard
+    "streamlit>=1.36.0",
+    "rich>=13.7.0",
+    "plotly>=5.22.0",
+
+    # Database
+    "sqlite-utils>=3.36",
+
+    # Utilities
+    "tenacity>=8.3.0",
+    "python-dateutil>=2.9.0",
+    "tqdm>=4.66.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.2.0",
+    "pytest-cov>=5.0.0",
+    "pytest-asyncio>=0.23.0",
+    "pytest-timeout>=2.3.0",
+    "ruff>=0.4.0",
+    "mypy>=1.10.0",
+    "types-pyyaml",
+    "types-requests",
+    "pre-commit>=3.7.0",
+]
+pdf = [
+    "pdfplumber>=0.11.0",
+    "PyMuPDF>=1.24.0",
+]
+voice = [
+    "pyttsx3>=2.90",
+    "SpeechRecognition>=3.10.0",
+    "pyaudio>=0.2.14",
+]
+whatsapp = [
+    "twilio>=9.2.0",
+]
+notion = [
+    "notion-client>=2.2.1",
+]
+all = [
+    "ai-job-agent[dev,pdf,voice,whatsapp,notion]",
+]
+
+[project.scripts]
+job-agent = "main:main"
+job-migrate = "scripts.migrate:main"
+job-health = "scripts.healthcheck:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ai*", "alerts*", "app*", "dashboard*", "database*", "evaluation*",
+           "integrations*", "observability*", "scrapers*", "scripts*"]
+
+# ── Ruff (linter + formatter) ──────────────────────────────────────────────────
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+exclude = ["data/", "resumes/", "*.ipynb"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM"]
+ignore = ["E501", "B008", "B904"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["ai", "alerts", "app", "database", "scrapers", "observability"]
+
+# ── Mypy ──────────────────────────────────────────────────────────────────────
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = false
+warn_unused_configs = true
+ignore_missing_imports = true
+exclude = ["data/", "resumes/", "tests/"]
+
+# ── Pytest ────────────────────────────────────────────────────────────────────
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--tb=short",
+    "--strict-markers",
+    "-q",
+]
+markers = [
+    "slow: marks tests as slow",
+    "integration: marks tests as requiring API keys",
+    "unit: marks tests as pure unit tests",
+]
+timeout = 30
+
+# ── Coverage ──────────────────────────────────────────────────────────────────
+
+[tool.coverage.run]
+source = ["ai", "app", "database", "scrapers", "observability"]
+omit = ["tests/*", "data/*", "resumes/*", "scripts/seed.py"]
+
+[tool.coverage.report]
+fail_under = 40
+show_missing = true
+skip_covered = false

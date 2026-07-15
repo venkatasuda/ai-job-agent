@@ -1,0 +1,169 @@
+version: "3.9"
+
+# ── AI Job Agent — Docker Compose
+# Usage:
+#   docker-compose up agent          # Run pipeline once
+#   docker-compose up agent-scheduler  # Run on hourly schedule
+#   docker-compose up dashboard      # Open Streamlit UI
+#   docker-compose up ollama         # Local LLM (no API key needed)
+#   docker-compose --profile full up # Everything
+
+services:
+
+  # ── Core agent (single pipeline run) ────────────────────────────────────────
+  agent:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+      target: production
+    image: ai-job-agent:latest
+    container_name: job-agent
+    command: ["python", "main.py", "--run-once"]
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - OLLAMA_HOST=http://ollama:11434
+    env_file:
+      - .env
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+      - ./resume.txt:/app/resume.txt:ro
+      - agent_data:/app/data
+      - agent_db:/app/jobs.db
+      - agent_logs:/app/observability
+    depends_on:
+      - ollama
+    networks:
+      - agent_net
+    profiles: ["agent", "full"]
+
+  # ── Scheduled agent (hourly) ─────────────────────────────────────────────────
+  agent-scheduler:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+      target: production
+    image: ai-job-agent:latest
+    container_name: job-agent-scheduler
+    command: ["python", "main.py", "--schedule"]
+    restart: unless-stopped
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - OLLAMA_HOST=http://ollama:11434
+    env_file:
+      - .env
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+      - ./resume.txt:/app/resume.txt:ro
+      - agent_data:/app/data
+      - agent_db:/app/jobs.db
+      - agent_logs:/app/observability
+    depends_on:
+      - ollama
+    networks:
+      - agent_net
+    healthcheck:
+      test: ["CMD", "python", "scripts/healthcheck.py", "--quick"]
+      interval: 5m
+      timeout: 30s
+      retries: 3
+      start_period: 30s
+    profiles: ["scheduler", "full"]
+
+  # ── Streamlit dashboard ──────────────────────────────────────────────────────
+  dashboard:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+      target: production
+    image: ai-job-agent:latest
+    container_name: job-dashboard
+    command: ["streamlit", "run", "dashboard/app.py",
+              "--server.port=8501", "--server.address=0.0.0.0",
+              "--server.headless=true", "--browser.gatherUsageStats=false"]
+    ports:
+      - "8501:8501"
+    environment:
+      - STREAMLIT_SERVER_ENABLE_CORS=false
+    env_file:
+      - .env
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+      - agent_data:/app/data
+      - agent_db:/app/jobs.db
+      - agent_logs:/app/observability
+    networks:
+      - agent_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    profiles: ["dashboard", "full"]
+
+  # ── Local Ollama LLM (zero API cost) ─────────────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    networks:
+      - agent_net
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    profiles: ["ollama", "full"]
+
+  # ── DB migration runner (one-shot) ───────────────────────────────────────────
+  migrate:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+      target: production
+    image: ai-job-agent:latest
+    container_name: job-migrate
+    command: ["python", "scripts/migrate.py"]
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+      - agent_db:/app/jobs.db
+    networks:
+      - agent_net
+    profiles: ["migrate"]
+
+  # ── Test runner ──────────────────────────────────────────────────────────────
+  test:
+    build:
+      context: .
+      dockerfile: app/Dockerfile
+      target: development
+    image: ai-job-agent:dev
+    container_name: job-tests
+    command: ["pytest", "tests/", "-v", "--tb=short"]
+    volumes:
+      - .:/app
+    networks:
+      - agent_net
+    profiles: ["test"]
+
+# ── Named volumes ─────────────────────────────────────────────────────────────
+volumes:
+  agent_data:
+    driver: local
+  agent_db:
+    driver: local
+  agent_logs:
+    driver: local
+  ollama_models:
+    driver: local
+
+# ── Networks ──────────────────────────────────────────────────────────────────
+networks:
+  agent_net:
+    driver: bridge

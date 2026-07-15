@@ -1,0 +1,32 @@
+# Core scraping
+python-jobspy>=0.31.0
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+# feedparser>=6.0.11  # not compatible with Python 3.14 (sgmllib3k missing)
+
+# AI / LLM
+openai>=1.30.0
+google-generativeai>=0.7.0
+
+# Config & validation
+pydantic>=2.7.0
+pydantic-settings>=2.3.0
+python-dotenv>=1.0.0
+pyyaml>=6.0.1
+
+# Scheduling
+apscheduler>=3.10.4
+
+# Dashboard
+streamlit>=1.36.0
+plotly>=5.22.0
+rich>=13.7.0
+
+# PDF resume parsing (optional)
+# pdfplumber>=0.11.0
+# python-docx>=1.1.0
+
+# Utilities
+tenacity>=8.3.0
+python-dateutil>=2.9.0
+tqdm>=4.66.0

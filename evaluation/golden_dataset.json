@@ -1,0 +1,121 @@
+{
+  "_meta": {
+    "description": "Golden test set for AI Job Agent evaluation",
+    "version": "1.0",
+    "created": "2025-07-14",
+    "usage": "Run: python evaluation/offline_eval.py"
+  },
+
+  "scoring_cases": [
+    {
+      "id": "score_001",
+      "description": "Perfect match — ML Engineer with exact tech stack",
+      "job": {
+        "title": "Machine Learning Engineer",
+        "company": "OpenAI",
+        "description": "We are looking for an ML Engineer with expertise in PyTorch, Python, and large language models. Experience with distributed training, CUDA, and ML pipelines required. Masters or PhD preferred.",
+        "location": "San Francisco, CA"
+      },
+      "resume": "Masters in Computer Science, 2 years experience. Skills: Python, PyTorch, TensorFlow, CUDA, distributed training, LLMs, RAG systems. Projects: Trained 7B parameter model on 8x H100 cluster.",
+      "expected_score_min": 85,
+      "expected_score_max": 100,
+      "expected_keywords": ["PyTorch", "Python", "distributed", "LLM", "Masters"]
+    },
+    {
+      "id": "score_002",
+      "description": "Weak match — Frontend role, backend resume",
+      "job": {
+        "title": "Senior React Engineer",
+        "company": "Vercel",
+        "description": "Expert-level React, TypeScript, Next.js. CSS, Tailwind, Framer Motion. 5+ years frontend experience required.",
+        "location": "Remote"
+      },
+      "resume": "Backend engineer, 2 years. Skills: Python, Go, PostgreSQL, Kubernetes, Docker. No frontend experience.",
+      "expected_score_min": 0,
+      "expected_score_max": 40,
+      "expected_keywords_missing": ["React", "TypeScript", "Next.js", "CSS"]
+    },
+    {
+      "id": "score_003",
+      "description": "Partial match — Data Engineer with some ML",
+      "job": {
+        "title": "Data Engineer",
+        "company": "Databricks",
+        "description": "Build data pipelines with Apache Spark, Kafka, and Delta Lake. SQL, Python required. PySpark experience strongly preferred.",
+        "location": "San Francisco, CA"
+      },
+      "resume": "Masters CS. Skills: Python, SQL, Apache Spark basics, PostgreSQL, dbt. No Kafka or Delta Lake experience.",
+      "expected_score_min": 55,
+      "expected_score_max": 80
+    }
+  ],
+
+  "cover_letter_cases": [
+    {
+      "id": "cl_001",
+      "description": "Cover letter should not start with 'I am applying for'",
+      "job": {
+        "title": "Software Engineer",
+        "company": "Stripe",
+        "description": "Build reliable payment systems. Python, Go, distributed systems."
+      },
+      "resume": "Masters CS. Python, Go, built distributed cache serving 10M req/day.",
+      "must_not_contain": ["I am applying for", "I am writing to", "Dear Hiring Manager,\nI am"],
+      "must_contain": ["Stripe"],
+      "min_words": 150,
+      "max_words": 450
+    },
+    {
+      "id": "cl_002",
+      "description": "Cover letter must mention company name",
+      "job": {
+        "title": "ML Engineer",
+        "company": "Anthropic",
+        "description": "Work on safety research, RLHF, constitutional AI, LLMs."
+      },
+      "resume": "PhD candidate, 3 publications on RLHF and alignment.",
+      "must_contain": ["Anthropic"],
+      "must_not_contain": ["[COMPANY]", "[YOUR NAME]", "[DATE]"],
+      "min_words": 150,
+      "max_words": 450
+    }
+  ],
+
+  "ats_scan_cases": [
+    {
+      "id": "ats_001",
+      "description": "Resume missing key ATS keywords should score low",
+      "job_keywords": ["Kubernetes", "Docker", "CI/CD", "Terraform", "AWS"],
+      "resume": "Python developer. Built web apps with Django and PostgreSQL. No cloud experience.",
+      "expected_verdict": "FAIL",
+      "expected_missing_min": 3
+    },
+    {
+      "id": "ats_002",
+      "description": "Resume with all keywords should pass ATS",
+      "job_keywords": ["Python", "FastAPI", "PostgreSQL", "Docker", "REST API"],
+      "resume": "Python engineer. Built REST APIs with FastAPI, deployed with Docker, PostgreSQL backend.",
+      "expected_verdict": "PASS",
+      "expected_missing_max": 1
+    }
+  ],
+
+  "scam_filter_cases": [
+    {
+      "id": "scam_001",
+      "job": {
+        "title": "Work From Home - Earn $500/day",
+        "description": "No experience needed! Immediate start. Western Union payments. Click here to apply."
+      },
+      "expected_blocked": true
+    },
+    {
+      "id": "scam_002",
+      "job": {
+        "title": "Software Engineer",
+        "description": "We are building a distributed payment system. Python, Go, strong CS fundamentals required."
+      },
+      "expected_blocked": false
+    }
+  ]
+}

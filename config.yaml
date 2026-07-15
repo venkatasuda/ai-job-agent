@@ -1,0 +1,492 @@
+# ============================================================
+#  AI Job Agent v2 - User Configuration
+#  Merged: JobSpy + career-ops + MadsLorentzen/ai-job-search
+# ============================================================
+
+profile:
+  name: "Venkata Nagendra Reddy Suda"
+  email: "venkata.suda@outlook.com"
+  resume_path: "resumes/tailored/resume_JD_Joybuy_FINAL.tex"
+  linkedin_url: "https://linkedin.com/in/venkatasuda"
+  location: "Stuttgart, Germany"
+  remote_ok: true
+
+search:
+  keywords:
+    - "Machine Learning Engineer"
+    - "ML Engineer"
+    - "AI Engineer"
+    - "NLP Engineer"
+    - "Data Scientist"
+    - "MLOps Engineer"
+    - "Computer Vision Engineer"
+    - "Research Engineer"
+    - "Applied Scientist"
+    - "Recommendation Systems Engineer"
+  locations:
+    - "Germany"              # entire country — catches small towns too
+    - "United Kingdom"       # entire UK, not just London
+    - "Netherlands"
+    - "France"
+    - "Sweden"
+    - "Switzerland"
+    - "Austria"
+    - "Spain"
+    - "Remote"               # fully remote roles across Europe
+  experience_levels:
+    - "mid"
+    - "senior"
+  job_type: "fulltime"
+  min_salary: 55000                  # EUR/GBP — adjust to your target
+  excluded_companies: []
+  excluded_keywords:
+    - "unpaid"
+    - "commission only"
+    - "door to door"
+    - "no visa sponsorship"           # remove if you don't need sponsorship
+
+sources:
+  # ── JobSpy (LinkedIn / Indeed / Glassdoor / Google / ZipRecruiter) ──────────
+  # python-jobspy supports exactly these 5 sites — all are enabled.
+  jobspy:
+    enabled: true
+    sites:
+      - "linkedin"
+      - "indeed"
+      - "glassdoor"
+      - "google"
+      - "zip_recruiter"
+    results_per_site: 50
+
+  # ── European & German Job Boards ────────────────────────────────────────────
+  job_boards:
+    enabled: true
+    boards:
+      # Germany-specific
+      - name: "Arbeitnow EU Tech Jobs"
+        url: "https://www.arbeitnow.com/api/job-board-api"          # REST JSON, ML/tech filter
+      - name: "Instaffo Germany"
+        url: "https://instaffo.com/jobs"                             # dev-focused, Germany/Austria/CH
+      - name: "Berlin Startup Jobs"
+        url: "https://berlinstartupjobs.com/feed/"
+      - name: "Munich Startup Jobs"
+        url: "https://munichstartupjobs.com/feed/"
+      - name: "Hamburg Startup Jobs"
+        url: "https://hamburgstartupjobs.com/feed/"
+      - name: "Honeypot / Moonhire EU"
+        url: "https://app.honeypot.io/jobs"                          # EU tech talent platform
+      # European-wide
+      - name: "EuroTechJobs"
+        url: "https://eurotechjobs.com/jobs_rss.php"
+      - name: "StartupJobs EU"
+        url: "https://startupjobs.eu/feed"
+      - name: "Relocate.me"
+        url: "https://relocate.me/search/jobs/rss"                  # relocation-friendly
+      - name: "Remote EU"
+        url: "https://remote.eu/remote-jobs/rss/"
+      - name: "Remotive"
+        url: "https://remotive.com/remote-jobs/feed/all"
+      - name: "HN Who's Hiring"
+        url: "https://hnrss.org/whoishiring"
+      - name: "We Work Remotely"
+        url: "https://weworkremotely.com/remote-jobs.rss"
+      # GitHub curated boards
+      - name: "German Tech Jobs (GitHub)"
+        url: "https://github.com/nicerloop/german-tech-jobs"
+      - name: "Remote Jobs Europe (GitHub)"
+        url: "https://github.com/remoteintech/remote-jobs"
+
+  # ── ATS Company Targets (Greenhouse / Lever / Ashby) ───────────────────────
+  # Format: ["Display Name", "ats_type", "slug_or_url"]
+  # ATS types: greenhouse | lever | ashby
+  # Focus: Germany → UK → Netherlands → France → Sweden → Rest of Europe
+  ats_companies:
+    enabled: true
+    targets:
+
+      # ════════════════════════════════════════════════════
+      # GERMANY — BERLIN
+      # ════════════════════════════════════════════════════
+      - ["Zalando",              "greenhouse", "zalando"]            # e-commerce, search & recsys
+      - ["N26",                  "greenhouse", "n26"]                # neobank / ML fraud
+      - ["Contentful",           "greenhouse", "contentful"]         # headless CMS platform
+      - ["Adjust",               "greenhouse", "adjust"]             # mobile analytics / ML
+      - ["HelloFresh",           "greenhouse", "hellofresh"]         # e-commerce, demand forecasting
+      - ["Delivery Hero",        "greenhouse", "delivery-hero"]      # food delivery, recsys
+      - ["AUTO1 Group",          "greenhouse", "auto1-group"]        # used cars, ML pricing
+      - ["Babbel",               "greenhouse", "babbel"]             # language AI / NLP
+      - ["Qdrant",               "ashby",      "https://jobs.ashbyhq.com/qdrant"]  # vector DB
+      - ["Enpal",                "greenhouse", "enpal"]              # solar energy AI
+      - ["Tier Mobility",        "greenhouse", "tier-mobility"]      # e-scooter / ML routing
+      - ["Idealo",               "greenhouse", "idealo"]             # price comparison / search
+      - ["SumUp",                "greenhouse", "sumup"]              # fintech / payments ML
+      - ["Trade Republic",       "greenhouse", "trade-republic"]     # investment app / ML
+      - ["Taxfix",               "greenhouse", "taxfix"]             # tax SaaS / NLP
+      - ["Scalable Capital",     "greenhouse", "scalable-capital"]   # robo-advisor / ML
+      - ["Raisin",               "greenhouse", "raisin"]             # savings platform / fintech
+      - ["Mambu",                "greenhouse", "mambu"]              # cloud banking / SaaS
+      - ["Clark",                "greenhouse", "clark-germany"]      # insurance AI
+      - ["Wefox",                "greenhouse", "wefox"]              # insurtech / ML
+      - ["Sennder",              "greenhouse", "sennder"]            # freight logistics / ML
+      - ["Forto",                "greenhouse", "forto"]              # supply chain / ML
+      - ["Grover",               "greenhouse", "grover"]             # electronics rental / ML
+      - ["SoundCloud",           "greenhouse", "soundcloud"]         # audio / recsys
+      - ["ResearchGate",         "greenhouse", "researchgate"]       # research network / NLP
+      - ["Blinkist",             "greenhouse", "blinkist"]           # book summaries / NLP
+      - ["Homeday",              "greenhouse", "homeday"]            # proptech / ML valuations
+      - ["Billie",               "greenhouse", "billie"]             # B2B payments / ML
+      - ["Flink",                "greenhouse", "flink-food"]         # quick commerce / ML
+      - ["Moss",                 "greenhouse", "moss-financial"]     # spend management / ML
+      - ["Infarm",               "greenhouse", "infarm"]             # vertical farming / AI
+      - ["Merantix",             "greenhouse", "merantix"]           # AI company builder
+      - ["Home24",               "greenhouse", "home24"]             # online furniture / recsys
+      - ["Flaconi",              "greenhouse", "flaconi"]            # beauty e-commerce / recsys
+      - ["Aroundhome",           "greenhouse", "aroundhome"]         # home services / ML leads
+      - ["FREE NOW",             "greenhouse", "free-now"]           # ride-hailing (mytaxi) / ML
+      - ["Moonfare",             "greenhouse", "moonfare"]           # private equity / ML
+      - ["Element Insurance",    "greenhouse", "element-insurance"]  # embedded insurance / ML
+      - ["Ostrom",               "greenhouse", "ostrom"]             # energy SaaS / ML
+      - ["Kaufland e-commerce",  "greenhouse", "kaufland-ecommerce"] # e-commerce / search
+
+      # ════════════════════════════════════════════════════
+      # GERMANY — MUNICH
+      # ════════════════════════════════════════════════════
+      - ["Celonis",              "greenhouse", "celonis"]            # process mining AI
+      - ["Personio",             "greenhouse", "personio"]           # HR SaaS / ML
+      - ["Brainlab",             "greenhouse", "brainlab"]           # medical AI / imaging
+      - ["Siemens Healthineers", "greenhouse", "siemens-healthineers"] # medical AI (Erlangen)
+      - ["FlixBus / FlixGroup",  "greenhouse", "flixbus"]            # mobility & logistics ML
+      - ["Scout24",              "greenhouse", "scout24"]            # real estate / auto ML
+      - ["Westwing",             "greenhouse", "westwing"]           # home & living / recsys
+      - ["MaibornWolff",         "greenhouse", "maibornwolff"]       # AI/ML consulting
+      - ["Motius",               "greenhouse", "motius"]             # tech R&D / AI
+      - ["Expertlead",           "greenhouse", "expertlead"]         # tech talent platform
+      - ["Liqid",                "greenhouse", "liqid"]              # digital wealth / ML
+      - ["Stylight",             "greenhouse", "stylight"]           # fashion search / recsys
+      - ["isar Aerospace",       "greenhouse", "isar-aerospace"]     # space / AI guidance
+      - ["Lilium",               "greenhouse", "lilium"]             # electric aviation / ML
+      - ["Serviceware",          "greenhouse", "serviceware"]        # IT finance SaaS / ML
+      - ["ProSiebenSat.1",       "greenhouse", "prosiebensat1"]      # media / content recsys
+      - ["Allianz Direct",       "greenhouse", "allianz-direct"]     # insurtech / ML
+      - ["Giesecke+Devrient",    "greenhouse", "gi-de"]              # security tech / AI
+      - ["Rohde & Schwarz",      "greenhouse", "rohde-schwarz"]      # test & measurement / AI
+
+      # ════════════════════════════════════════════════════
+      # GERMANY — HAMBURG
+      # ════════════════════════════════════════════════════
+      - ["About You",            "greenhouse", "about-you"]          # fashion e-commerce / recsys
+      - ["XING / New Work SE",   "greenhouse", "new-work-se"]        # professional network / ML
+      - ["Otto Group",           "greenhouse", "otto-group"]         # e-commerce / ML
+      - ["bonprix",              "greenhouse", "bonprix"]            # fashion / recsys
+      - ["InnoGames",            "greenhouse", "innogames"]          # gaming / ML analytics
+      - ["Goodgame Studios",     "greenhouse", "goodgame-studios"]   # gaming / ML
+      - ["Statista",             "greenhouse", "statista"]           # data platform / NLP
+      - ["Freiheit.com",         "greenhouse", "freiheit-com"]       # software engineering
+      - ["Fielmann",             "greenhouse", "fielmann"]           # optician / e-commerce ML
+      - ["Evotec",               "greenhouse", "evotec"]             # drug discovery / AI
+      - ["Jimdo",                "greenhouse", "jimdo"]              # website builder / ML
+
+      # ════════════════════════════════════════════════════
+      # GERMANY — STUTTGART / KARLSRUHE / SOUTH-WEST
+      # ════════════════════════════════════════════════════
+      - ["TeamViewer",           "greenhouse", "teamviewer"]         # Göppingen — remote access
+      - ["Aleph Alpha",          "greenhouse", "aleph-alpha"]        # Heidelberg — EU LLM
+      - ["inovex",               "greenhouse", "inovex"]             # Karlsruhe — AI/ML services
+      - ["PTV Group",            "greenhouse", "ptv-group"]          # Karlsruhe — transport AI
+      - ["Gameforge",            "greenhouse", "gameforge"]          # Karlsruhe — gaming / ML
+      - ["Wingcopter",           "greenhouse", "wingcopter"]         # Darmstadt — drone AI
+      - ["MHP",                  "greenhouse", "mhp"]                # Ludwigsburg — Porsche IT consulting
+      - ["Bosch Digital",        "greenhouse", "bosch"]              # Stuttgart — IoT/AI (LinkedIn better)
+      - ["d.velop",              "greenhouse", "d-velop"]            # Gescher — document AI
+
+      # ════════════════════════════════════════════════════
+      # GERMANY — COLOGNE / DÜSSELDORF / NRW
+      # ════════════════════════════════════════════════════
+      - ["Trivago",              "greenhouse", "trivago"]            # Düsseldorf — hotel search / ML
+      - ["Stepstone",            "greenhouse", "stepstone"]          # Düsseldorf — job board AI
+      - ["Tonies",               "greenhouse", "tonies"]             # Düsseldorf — edtech / audio
+      - ["Rewe Digital",         "greenhouse", "rewe-digital"]       # Cologne — grocery e-commerce ML
+      - ["Quentic",              "greenhouse", "quentic"]            # Berlin/Cologne — EHS SaaS
+      - ["Flaschenpost",         "greenhouse", "flaschenpost"]       # Münster — beverage delivery / ML
+
+      # ════════════════════════════════════════════════════
+      # GERMANY — FRANKFURT / CENTRAL
+      # ════════════════════════════════════════════════════
+      - ["Auxmoney",             "greenhouse", "auxmoney"]           # Düsseldorf — credit ML
+      - ["compeon",              "greenhouse", "compeon"]            # Düsseldorf — B2B finance ML
+      - ["Volocopter",           "greenhouse", "volocopter"]         # Bruchsal — air taxi / AI
+      - ["Wolt",                 "greenhouse", "wolt"]               # Helsinki/Germany — delivery recsys
+
+      # ════════════════════════════════════════════════════
+      # UK — London-focused  (your relocation target)
+      # ════════════════════════════════════════════════════
+      - ["Wayve",                "greenhouse", "wayve"]              # London — autonomous driving AI
+      - ["Monzo",                "greenhouse", "monzo"]              # London — neobank / ML fraud
+      - ["Revolut",              "greenhouse", "revolut"]            # London — fintech / ML
+      - ["Wise",                 "greenhouse", "transferwise"]       # London — payments / ML
+      - ["Starling Bank",        "greenhouse", "starling-bank"]      # London — neobank
+      - ["Checkout.com",         "greenhouse", "checkout-com"]       # London — payments ML
+      - ["Thought Machine",      "greenhouse", "thought-machine"]    # London — core banking AI
+      - ["Cleo",                 "greenhouse", "cleo"]               # London — AI finance app
+      - ["Synthesia",            "greenhouse", "synthesia"]          # London — AI video / NLP
+      - ["Faculty AI",           "greenhouse", "faculty"]            # London — applied AI
+      - ["Improbable",           "greenhouse", "improbable"]         # London — AI / simulation
+      - ["Graphcore",            "greenhouse", "graphcore"]          # Bristol — AI chip company
+      - ["Quantexa",             "greenhouse", "quantexa"]           # London — graph AI / financial crime
+      - ["Onfido",               "greenhouse", "onfido"]             # London — identity verification AI
+      - ["Tractable",            "greenhouse", "tractable"]          # London — computer vision AI
+      - ["Featurespace",         "greenhouse", "featurespace"]       # London — ML / fraud detection
+      - ["Eigen Technologies",   "greenhouse", "eigen-technologies"] # London — NLP / document AI
+      - ["Signal AI",            "greenhouse", "signal-ai"]          # London — NLP / media intelligence
+      - ["Multiverse",           "greenhouse", "multiverse"]         # London — AI apprenticeships
+      - ["Ocado Technology",     "greenhouse", "ocado"]              # London — e-commerce robotics
+      - ["Deliveroo",            "greenhouse", "deliveroo"]          # London — food delivery, recsys
+      - ["Skyscanner",           "greenhouse", "skyscanner"]         # London/Edinburgh — travel search
+      - ["Cazoo",                "greenhouse", "cazoo"]              # London — used cars ML
+      - ["Paddle",               "greenhouse", "paddle"]             # London — payments SaaS
+      - ["ASOS",                 "greenhouse", "asos"]               # London — fashion e-commerce ML
+      - ["Photoroom",            "lever",      "https://jobs.lever.co/photoroom"] # London/Paris — AI photo
+
+      # ════════════════════════════════════════════════════
+      # NETHERLANDS
+      # ════════════════════════════════════════════════════
+      - ["Adyen",                "greenhouse", "adyen"]              # Amsterdam — payments / ML
+      - ["Booking.com",          "greenhouse", "booking"]            # Amsterdam — search & recsys
+      - ["Mollie",               "greenhouse", "mollie"]             # Amsterdam — payments
+      - ["Messagebird / Bird",   "greenhouse", "messagebird"]        # Amsterdam — CPaaS
+      - ["Picnic",               "greenhouse", "picnic"]             # Amsterdam — grocery delivery, ML
+      - ["Vinted",               "greenhouse", "vinted"]             # Vilnius/Amsterdam — fashion recsys
+      - ["TomTom",               "greenhouse", "tomtom"]             # Amsterdam — maps / navigation AI
+
+      # ════════════════════════════════════════════════════
+      # FRANCE
+      # ════════════════════════════════════════════════════
+      - ["Mistral AI",           "lever",      "https://jobs.lever.co/mistral"]   # Paris — LLM
+      - ["Dataiku",              "greenhouse", "dataiku"]            # Paris — data science platform
+      - ["Doctolib",             "greenhouse", "doctolib"]           # Paris — healthtech AI
+      - ["Alan",                 "greenhouse", "alan"]               # Paris — health insurance AI
+      - ["BlaBlaCar",            "greenhouse", "blablacar"]          # Paris — ride sharing ML
+      - ["Contentsquare",        "greenhouse", "contentsquare"]      # Paris — UX analytics AI
+      - ["Criteo",               "greenhouse", "criteo"]             # Paris — ad targeting / recsys
+      - ["Ledger",               "greenhouse", "ledger"]             # Paris — crypto hardware
+      - ["Shift Technology",     "greenhouse", "shift-technology"]   # Paris — insurance AI
+      - ["Pennylane",            "greenhouse", "pennylane"]          # Paris — accounting SaaS
+
+      # ════════════════════════════════════════════════════
+      # SWEDEN / NORDICS
+      # ════════════════════════════════════════════════════
+      - ["Klarna",               "greenhouse", "klarna"]             # Stockholm — BNPL / ML
+      - ["Spotify",              "greenhouse", "spotify"]            # Stockholm — audio recsys
+      - ["King",                 "greenhouse", "king"]               # Stockholm — gaming ML
+      - ["Supercell",            "greenhouse", "supercell"]          # Helsinki — gaming AI
+      - ["Pipedrive",            "greenhouse", "pipedrive"]          # Tallinn — CRM / ML
+      - ["Bolt",                 "greenhouse", "bolt-eu"]            # Tallinn — ride-sharing / ML
+
+      # ════════════════════════════════════════════════════
+      # SPAIN / REST OF EUROPE
+      # ════════════════════════════════════════════════════
+      - ["Glovo",                "greenhouse", "glovo"]              # Barcelona — food delivery, recsys
+      - ["Factorial HR",         "greenhouse", "factorial"]          # Barcelona — HR SaaS
+      - ["Wallapop",             "greenhouse", "wallapop"]           # Barcelona — second-hand marketplace ML
+      - ["Typeform",             "greenhouse", "typeform"]           # Barcelona — forms / data
+      - ["Duda",                 "greenhouse", "duda"]               # Tel Aviv/EU — website builder
+      - ["Wix",                  "greenhouse", "wix"]                # Tel Aviv — website / ML
+
+      # ════════════════════════════════════════════════════
+      # GLOBAL WITH STRONG EU OFFICES  (hire in Germany/UK)
+      # ════════════════════════════════════════════════════
+      - ["Hugging Face",         "lever",      "https://jobs.lever.co/huggingface"]  # Remote/EU
+      - ["Weights & Biases",     "lever",      "https://jobs.lever.co/wandb"]        # Remote/EU
+      - ["Elastic",              "greenhouse", "elastic"]            # Distributed, EU hubs
+      - ["Algolia",              "greenhouse", "algolia"]            # Paris / London / Remote
+      - ["Databricks",           "greenhouse", "databricks"]         # Amsterdam / London offices
+      - ["Snowflake",            "greenhouse", "snowflake"]          # Munich / London offices
+      - ["Grafana Labs",         "greenhouse", "grafana-labs"]       # Remote-first, EU-friendly
+      - ["GitLab",               "greenhouse", "gitlab"]             # Fully remote
+      - ["Sentry",               "lever",      "https://jobs.lever.co/sentry"]       # Remote/EU
+      - ["Cloudflare",           "greenhouse", "cloudflare"]         # London office
+      - ["Datadog",              "greenhouse", "datadog"]            # Paris HQ + London
+      - ["1Password",            "greenhouse", "1password"]          # Remote / EU
+      - ["Miro",                 "greenhouse", "miro"]               # Amsterdam / Berlin offices
+      - ["Deel",                 "greenhouse", "deel"]               # Remote / EU hiring
+      - ["Remote.com",           "greenhouse", "remote"]             # Fully remote, EU-first
+      - ["Stripe",               "greenhouse", "stripe"]             # Dublin / London offices
+      - ["Coinbase",             "greenhouse", "coinbase"]           # Dublin / Remote
+      - ["Duolingo",             "greenhouse", "duolingo"]           # Remote / EU
+
+ai:
+  provider: "openai"               # openai | gemini | ollama (free/local)
+  model: "gpt-4o-mini"            # cheapest option — ~$2-5/month running hourly
+  min_match_score: 70
+
+  openai_api_key: ""              # Or set env var OPENAI_API_KEY
+  gemini_api_key: ""              # Or set env var GEMINI_API_KEY
+
+  cover_letter_threshold: 70      # Generate cover letter if score >= this
+  company_research_threshold: 78  # Run company research if score >= this
+  interview_prep_threshold: 80    # Generate interview prep if score >= this
+  salary_estimate: true
+
+  auto_apply:
+    enabled: false                # Set true to enable — START WITH false!
+    platforms:
+      - "linkedin_easy_apply"
+    max_applications_per_run: 5
+    require_min_score: 85
+
+  upskill:
+    enabled: true
+    run_every_n_runs: 168         # Once per week (168 hourly runs)
+
+alerts:
+  email:
+    enabled: true
+    smtp_host: "smtp.gmail.com"
+    smtp_port: 587
+    sender_email: "your@gmail.com"
+    sender_password: ""            # Gmail App Password — NOT your regular password
+    recipient_email: "your@email.com"
+    min_score_to_alert: 70
+    include_followup_reminders: true
+
+  telegram:
+    enabled: false
+    bot_token: ""                  # From @BotFather. Or env var TELEGRAM_BOT_TOKEN
+    chat_id: ""                    # Or env var TELEGRAM_CHAT_ID
+    min_score_to_alert: 75
+    send_followup_reminders: true
+
+schedule:
+  interval_minutes: 60
+  run_immediately: true
+
+database:
+  path: "jobs.db"
+  dedupe_window_days: 30
+
+linkedin:
+  email: ""
+  password: ""
+
+# ── New Grad / Masters Specific ──────────────────────────────────────────────
+new_grad:
+  enabled: true
+  degree: "Masters"
+  field: "Computer Science"          # Your masters field
+  school: "Your University"
+  school_tier: "Top-50"              # Top-10 / Top-50 / Other
+  graduation_year: 2024
+  is_international: false            # Set true if on F-1/OPT
+
+visa_filter:
+  exclude_no_sponsor: false          # Set TRUE if you need visa sponsorship
+  require_sponsorship: false         # Only show jobs that explicitly sponsor
+
+daily_routine:
+  enabled: true
+  daily_application_target: 10      # How many jobs to apply to per day
+  morning_briefing_hour: 8          # Hour to send morning briefing (24h)
+  evening_summary_hour: 18          # Hour to send evening summary
+  streak_reminder: true             # Remind if streak is about to break
+
+gmail_parser:
+  enabled: false                    # Set true after Gmail API setup
+  credentials_path: "gmail_credentials.json"
+  token_path: "gmail_token.json"
+
+portfolio:
+  github_username: ""               # Your GitHub username for portfolio analysis
+  linkedin_url: ""                  # Already in profile, but can override here
+
+# ── Alerts: WhatsApp ─────────────────────────────────────────────────────────
+alerts:
+  whatsapp:
+    enabled: false
+    provider: "callmebot"             # callmebot (free) | twilio ($0.005/msg)
+    # CallMeBot (free): Send "I allow callmebot to send me messages" to +34 644 50 99 43
+    phone_number: "+1234567890"       # Your WhatsApp number with country code
+    callmebot_api_key: ""             # You get this from CallMeBot setup
+    # Twilio (paid):
+    account_sid: ""
+    auth_token: ""
+    to_number: "+1234567890"
+    min_score_to_alert: 80
+
+# ── Scrapers: Discord Monitor ─────────────────────────────────────────────────
+scrapers:
+  discord:
+    enabled: false
+    bot_token: ""                     # Create bot at discord.com/developers/applications
+    channel_ids: []                   # List of channel IDs to monitor for jobs
+    # Get channel ID: Discord → Developer Mode ON → Right-click channel → "Copy ID"
+
+# ── Study Group / Multi-User Mode ────────────────────────────────────────────
+study_group:
+  enabled: false
+  mode: "solo"                        # solo | shared_file
+  shared_file: "study_group.json"     # Share this file via Google Drive/Dropbox
+
+# ── Integrations: Notion + Airtable ──────────────────────────────────────────
+integrations:
+  notion:
+    enabled: false
+    token: ""                         # From notion.so/my-integrations
+    database_id: ""                   # From Notion database URL
+    min_score_to_sync: 70
+
+  airtable:
+    enabled: false
+    token: ""                         # Personal Access Token from airtable.com
+    base_id: ""                       # Starts with 'app...'
+    table_name: "Job Applications"
+    min_score_to_sync: 70
+
+# ── Intelligence Features ─────────────────────────────────────────────────────
+intelligence:
+  hiring_signals:
+    enabled: true
+    threshold_score: 70               # Only check signals for jobs scoring above this
+  freeze_detector:
+    enabled: true
+    exclude_frozen: true              # Skip FROZEN companies automatically
+  market_pulse:
+    enabled: true
+    run_every_n_runs: 168             # Weekly (168 hourly runs)
+
+# ── Cover Letter A/B Testing ──────────────────────────────────────────────────
+ab_testing:
+  enabled: true
+  min_samples_for_winner: 10         # Need 10 sent before declaring a winner
+
+# ── Application Timing Optimizer ─────────────────────────────────────────────
+timing:
+  enabled: true
+  warn_if_suboptimal: true           # Show warning if applying on Friday/weekend
+
+# ── Reference Manager ─────────────────────────────────────────────────────────
+references:
+  enabled: true
+  max_uses_per_month: 3             # Alert if a reference is used > 3x/month
+
+# ── Personal Scoring Model ────────────────────────────────────────────────────
+personalization:
+  enabled: true
+  min_interactions: 10              # Start personalizing after 10 interactions
+
+# ── JD Summarizer ─────────────────────────────────────────────────────────────
+jd_summarizer:
+  enabled: true
+  min_score: 60                     # Summarize JDs for jobs scoring above this
+
+# ── Resume Optimizer ──────────────────────────────────────────────────────────
+resume_optimizer:
+  enabled: true
+  min_score: 70                     # Only optimize resumes for jobs scoring above this
+  # Tailored resumes saved to: resumes/tailored/resume_<Company>_<Role>.txt
+  # Each file is a job-specific version of your master resume.txt
+  # Rules:
+  #   - Never fabricates experience or skills
+  #   - Reorders bullets to put most relevant first
+  #   - Mirrors JD language where truthful
+  #   - Tracks every change made and why
+

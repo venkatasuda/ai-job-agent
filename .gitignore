@@ -1,0 +1,83 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment & secrets
+.env
+*.env
+*.env.local
+config.yaml          # Contains API keys — never commit!
+
+# Database
+jobs.db
+jobs_backup*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
+# Resume (personal)
+resume.txt
+resume.pdf
+resume*.txt
+
+# Agent state / cache
+feed_state.json
+freeze_cache.json
+jd_summary_cache.json
+leetcode_progress.json
+voice_session_log.json
+ab_test_results.json
+timing_history.json
+reference_log.json
+study_group_state.json
+personal_preferences.json
+
+# Observability logs (large, ephemeral)
+observability/traces/
+observability/cost_log.jsonl
+observability/feedback_log.jsonl
+
+# Evaluation results
+evaluation/metrics_history.jsonl
+evaluation/eval_results/
+
+# Resumes directory (personal)
+resumes/
+
+# Notion / Airtable ID maps
+notion_id_map.json
+airtable_id_map.json
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.swp
+.DS_Store
+Thumbs.db
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+*.xml
+
+# Docker
+.docker/
+
+# Node (if frontend tools added)
+node_modules/
+npm-debug.log
